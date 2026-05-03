@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply text-gray-200 antialiased overflow-hidden;
+  }
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { @apply bg-navy-800; }
+::-webkit-scrollbar-thumb { @apply bg-navy-600 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-navy-500; }
+
+/* ── Typography & Layout ─────────────────────────────────────── */
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.cursor-blink { animation: blink 0.8s step-end infinite; }
+
+/* ── PDF Page Styles ─────────────────────────────────────────── */
+.react-pdf__Page {
+  @apply shadow-2xl transition-transform duration-300 ease-out;
+}
+.react-pdf__Page canvas {
+  @apply rounded-sm mx-auto !important;
+}
+
+/* ── Message Step Blocks ─────────────────────────────────────── */
+.step-block {
+  @apply my-3 border-l-2 border-orange pl-4 bg-navy-700/30 py-2 rounded-r-lg;
+}
+.step-number {
+  @apply font-mono font-bold text-orange mr-2;
+}

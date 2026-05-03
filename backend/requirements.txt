@@ -1,0 +1,23 @@
+# ── Web framework ──────────────────────────────────────────────
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic-settings==2.4.0
+
+# ── AI / Model loading ─────────────────────────────────────────
+transformers==4.44.2
+torch==2.4.1
+accelerate==0.33.0
+sentencepiece==0.2.0
+tokenizers==0.19.1
+huggingface_hub==0.24.6
+
+# ── GGUF support (optional — only needed if USE_LLAMA_CPP=true) ─
+llama-cpp-python==0.2.90
+
+# ── PDF processing ─────────────────────────────────────────────
+PyMuPDF==1.24.9
+
+# ── Utilities ──────────────────────────────────────────────────
+python-dotenv==1.0.1
+httpx==0.27.2
