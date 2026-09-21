@@ -1,0 +1,62 @@
+{
+  "run_id": "3e48b4e1-784f-4853-a9db-1f59322c3abd",
+  "timestamp": "2026-08-30T23:31:02Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "sess_sess_mfdq1o_yash_flt_2026gs_qp",
+  "query": "WHAT WAS THE ESSAY 1 ?",
+  "plan": {
+    "intent": "SCHEMATIC_OR_PROCEDURE",
+    "rationale": "Query focuses on diagrams, switch locations, wiring, text content, or document steps.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5-vl:7b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b-instruct",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      10,
+      49,
+      39
+    ],
+    "math_computed": false,
+    "logistics_hits": 0
+  },
+  "response": "[WARNING] The term \"ESSAY 1\" is not defined or mentioned in the provided document. Therefore, I am unable to provide information about it based on the given context.\n\nIf you have any other questions related to the content available on pages 39, 49, and 10 of the document, please feel free to ask.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "VERIFIED_SAFE",
+    "safety_score": 98,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 88.0,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": false,
+    "latency_ms": 32433.24
+  },
+  "latency_ms": 32433.236360549927,
+  "cloud_synced": false
+}

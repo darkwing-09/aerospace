@@ -1,0 +1,43 @@
+{
+  "run_id": "e4fe5459-58d6-48ea-9a27-c055d9c3f0a8",
+  "timestamp": "2026-08-30T11:45:39Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+  "plan": {
+    "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+    "aircraft": "mig21bis",
+    "parallel_tasks": [
+      "visual_schematic_rag",
+      "avionics_math_engine"
+    ],
+    "sequential_tasks": [
+      "safety_validation",
+      "command_synthesis"
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      144,
+      95,
+      23
+    ],
+    "math_computed": true,
+    "logistics_hits": 0
+  },
+  "response": "\n[Generation error: Model timeout \u2014 CPU inference too slow for this prompt size.]",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": true,
+    "latency_ms": 301628.7
+  },
+  "latency_ms": 301628.7019252777,
+  "cloud_synced": false
+}

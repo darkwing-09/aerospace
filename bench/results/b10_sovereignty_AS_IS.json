@@ -1,0 +1,223 @@
+{
+  "benchmark": "B10_sovereignty_AS_IS",
+  "timestamp": "2026-09-22T02:56:42Z",
+  "source_scan": {
+    "total_urls_in_code": 3,
+    "external_urls": [
+      {
+        "file": "backend/config.py",
+        "url": "https://api.smith.langchain.com",
+        "is_local": false,
+        "is_external": true
+      }
+    ],
+    "local_urls": [
+      {
+        "file": "backend/model_service.py",
+        "url": "http://127.0.0.1:11434/api/tags",
+        "is_local": true,
+        "is_external": false
+      },
+      {
+        "file": "backend/config.py",
+        "url": "http://127.0.0.1:11434",
+        "is_local": true,
+        "is_external": false
+      }
+    ],
+    "external_count": 1,
+    "local_count": 2
+  },
+  "api_keys": {
+    "keys_found": [
+      {
+        "key": "LANGCHAIN_API_KEY",
+        "has_value": false,
+        "value_preview": "(empty)"
+      },
+      {
+        "key": "HF_TOKEN",
+        "has_value": false,
+        "value_preview": "(empty)"
+      },
+      {
+        "key": "MAX_NEW_TOKENS",
+        "has_value": true,
+        "value_preview": "1200"
+      }
+    ],
+    "any_populated": true,
+    "assessment": "WARNING \u2014 populated API keys could enable cloud calls"
+  },
+  "langsmith_cloud": {
+    "references": [
+      {
+        "file": "backend/langsmith_service.py",
+        "line": 20,
+        "content": "if settings.LANGCHAIN_API_KEY or os.getenv(\"LANGCHAIN_API_KEY\"):"
+      },
+      {
+        "file": "backend/langsmith_service.py",
+        "line": 22,
+        "content": "os.environ[\"LANGCHAIN_API_KEY\"] = settings.LANGCHAIN_API_KEY or os.getenv(\"LANGCHAIN_API_KEY\", \"\")"
+      },
+      {
+        "file": "backend/langsmith_service.py",
+        "line": 35,
+        "content": "api_key = settings.LANGCHAIN_API_KEY or os.getenv(\"LANGCHAIN_API_KEY\")"
+      },
+      {
+        "file": "backend/langsmith_service.py",
+        "line": 49,
+        "content": "return self.client is not None or bool(os.getenv(\"LANGCHAIN_API_KEY\"))"
+      }
+    ],
+    "assessment": "LATENT_RISK \u2014 LangSmith code exists and references api.smith.langchain.com, but LANGCHAIN_API_KEY is empty so no calls are made. If a key is added, traces will be sent to cloud."
+  },
+  "network_baseline": {
+    "established_connections": 63,
+    "connections": [
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:34103",
+        "remote": "127.0.0.1:46252",
+        "process": "users:((\"antigravity-ide\",pid=5142,fd=132))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:35033",
+        "remote": "127.0.0.1:49670",
+        "process": "users:((\"antigravity-ide\",pid=155843,fd=62))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:35033",
+        "remote": "127.0.0.1:49660",
+        "process": "users:((\"antigravity-ide\",pid=155843,fd=61))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:34103",
+        "remote": "127.0.0.1:46258",
+        "process": "users:((\"antigravity-ide\",pid=5142,fd=133))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:35962",
+        "remote": "127.0.0.1:42915",
+        "process": "users:((\"antigravity-ide\",pid=155843,fd=70))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:40708",
+        "remote": "162.247.243.29:443",
+        "process": "users:((\"chrome\",pid=9971,fd=35))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:40720",
+        "remote": "162.247.243.29:443",
+        "process": "users:((\"chrome\",pid=9971,fd=40))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:40736",
+        "remote": "162.247.243.29:443",
+        "process": "users:((\"chrome\",pid=9971,fd=46))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:51420",
+        "remote": "146.190.8.92:443",
+        "process": "users:((\"chrome\",pid=9971,fd=44))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:34103",
+        "remote": "127.0.0.1:46242",
+        "process": "users:((\"antigravity-ide\",pid=5142,fd=130))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:44880",
+        "remote": "127.0.0.1:39861",
+        "process": "users:((\"language_server\",pid=10803,fd=15))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:44882",
+        "remote": "127.0.0.1:39861",
+        "process": "users:((\"language_server\",pid=10803,fd=12))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:44896",
+        "remote": "127.0.0.1:39861",
+        "process": "users:((\"language_server\",pid=10803,fd=14))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:44910",
+        "remote": "127.0.0.1:39861",
+        "process": "users:((\"language_server\",pid=10803,fd=16))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:39861",
+        "remote": "127.0.0.1:44882",
+        "process": "users:((\"antigravity-ide\",pid=5717,fd=56))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:44314",
+        "remote": "34.54.84.110:443",
+        "process": "users:((\"language_server\",pid=10803,fd=11))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:45340",
+        "remote": "34.54.84.110:443",
+        "process": "users:((\"language_server\",pid=5487,fd=41))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:46666",
+        "remote": "34.54.84.110:443",
+        "process": "users:((\"language_server\",pid=156142,fd=13))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "127.0.0.1:39861",
+        "remote": "127.0.0.1:44896",
+        "process": "users:((\"antigravity-ide\",pid=5717,fd=58))"
+      },
+      {
+        "state": "ESTAB",
+        "local": "192.168.1.36:46876",
+        "remote": "192.178.158.188:5228",
+        "process": "users:((\"chrome\",pid=9971,fd=26))"
+      }
+    ]
+  },
+  "ollama": {
+    "is_local": true,
+    "host": "127.0.0.1:11434",
+    "listening": [
+      "LISTEN 0      4096       127.0.0.1:11434      0.0.0.0:*                                                "
+    ]
+  },
+  "verdict": {
+    "air_gapped": true,
+    "conditions": [
+      "All API keys in .env are currently empty",
+      "Ollama runs on localhost:11434",
+      "No outbound connections observed during baseline"
+    ],
+    "risks": [
+      "LangSmith code will phone home if LANGCHAIN_API_KEY is populated",
+      "requirements.txt includes langsmith package which could auto-trace",
+      "No network firewall rule enforced by the application"
+    ],
+    "safe_wording": "AeroMind currently operates air-gapped because all cloud API keys are empty and Ollama binds to localhost. However, the codebase contains LangSmith integration that would send traces to api.smith.langchain.com if an API key were added. There is no application-level network fence."
+  }
+}

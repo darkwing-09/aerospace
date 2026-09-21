@@ -1,0 +1,24 @@
+{
+  "run_id": "8b1e4fd7-4887-4019-8938-f5c6d5a63c0b",
+  "timestamp": "2026-08-30T21:52:49Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "MiG-21 emergency start",
+  "plan": {
+    "tasks": [
+      "visual",
+      "safety"
+    ]
+  },
+  "agent_steps": {
+    "visual": [
+      42
+    ]
+  },
+  "response": "Engine start sequence...",
+  "evaluation": {
+    "faithfulness_score": 95
+  },
+  "latency_ms": 920.0,
+  "cloud_synced": false
+}

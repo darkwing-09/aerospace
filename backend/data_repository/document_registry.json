@@ -1,0 +1,82 @@
+{
+  "mig21bis": {
+    "id": "mig21bis",
+    "name": "MiG-21bis Flight & Systems Manual",
+    "filename": "mig21bis.pdf",
+    "file_path": "/home/darkwing/Desktop/aeromind (copy 1)/backend/pdfs/mig21bis.pdf",
+    "file_type": "pdf",
+    "category": "AIRCRAFT_MANUAL",
+    "description": "Tactical flight operations, cockpit instruments, and Tumansky R25-300 engine maintenance.",
+    "size_mb": 68.21,
+    "total_pages": 330,
+    "accent_color": "#e8780a",
+    "nato_name": "FISHBED",
+    "engine": "Tumansky R25-300",
+    "tags": [
+      "fighter",
+      "supersonic",
+      "soviet",
+      "manual",
+      "cockpit"
+    ],
+    "created_at": "2026-08-30"
+  },
+  "da_2026_syllabus": {
+    "id": "da_2026_syllabus",
+    "name": "DA_2026_Syllabus.pdf",
+    "filename": "DA_2026_Syllabus.pdf",
+    "file_path": "/home/darkwing/Desktop/aeromind (copy 1)/backend/pdfs/DA_2026_Syllabus.pdf",
+    "file_type": "pdf",
+    "category": "AIRCRAFT_MANUAL",
+    "description": "Imported .PDF defense data record.",
+    "size_mb": 0.51,
+    "tags": [
+      "pdf",
+      "aircraft_manual"
+    ],
+    "created_at": "2026-08-30",
+    "total_pages": 1
+  },
+  "sess_sess_kz8qmv_smart_india_hackathon2": {
+    "id": "sess_sess_kz8qmv_smart_india_hackathon2",
+    "name": "Smart India Hackathon2.pdf",
+    "filename": "Smart India Hackathon2.pdf",
+    "file_path": "/home/darkwing/Desktop/aeromind (copy 1)/backend/data_repository/uploads/sess_sess_kz8qmv_smart_india_hackathon2_Smart India Hackathon2.pdf",
+    "file_type": "pdf",
+    "category": "SESSION_UPLOAD",
+    "session_id": "sess_kz8qmv",
+    "description": "Session-uploaded document: Smart India Hackathon2.pdf",
+    "size_mb": 1.15,
+    "total_pages": 12,
+    "accent_color": "#e8780a",
+    "created_at": "2026-08-31"
+  },
+  "sess_sess_mfdq1o_yash_flt_2026gs_qp": {
+    "id": "sess_sess_mfdq1o_yash_flt_2026gs_qp",
+    "name": "Yash_FLT_2026GS_QP.pdf",
+    "filename": "Yash_FLT_2026GS_QP.pdf",
+    "file_path": "/home/darkwing/Desktop/aeromind (copy 1)/backend/data_repository/uploads/sess_sess_mfdq1o_yash_flt_2026gs_qp_Yash_FLT_2026GS_QP.pdf",
+    "file_type": "pdf",
+    "category": "SESSION_UPLOAD",
+    "session_id": "sess_mfdq1o",
+    "description": "Session-uploaded document: Yash_FLT_2026GS_QP.pdf",
+    "size_mb": 10.07,
+    "total_pages": 56,
+    "accent_color": "#e8780a",
+    "created_at": "2026-08-31"
+  },
+  "sess_sess_e4fv7b_software_internship_assessment": {
+    "id": "sess_sess_e4fv7b_software_internship_assessment",
+    "name": "Software_Internship_Assessment.pdf",
+    "filename": "Software_Internship_Assessment.pdf",
+    "file_path": "/home/darkwing/Desktop/aeromind (copy 1)/backend/data_repository/uploads/sess_sess_e4fv7b_software_internship_assessment_Software_Internship_Assessment.pdf",
+    "file_type": "pdf",
+    "category": "SESSION_UPLOAD",
+    "session_id": "sess_e4fv7b",
+    "description": "Session-uploaded document: Software_Internship_Assessment.pdf",
+    "size_mb": 0.03,
+    "total_pages": 4,
+    "accent_color": "#e8780a",
+    "created_at": "2026-08-31"
+  }
+}

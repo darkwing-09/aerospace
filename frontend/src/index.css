@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply text-gray-200 antialiased overflow-hidden bg-[#0a0d12];
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { @apply bg-[#0e131b]; }
+::-webkit-scrollbar-thumb { @apply bg-navy-600 rounded-full hover:bg-orange/70; }
+
+/* ── Typography ─────────────────────────────────────────────── */
+.font-mono { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
+
+/* ── Tactical Animations & Glows ────────────────────────────── */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.cursor-blink { animation: blink 0.8s step-end infinite; }
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(232, 120, 10, 0.2); }
+  50% { box-shadow: 0 0 28px rgba(232, 120, 10, 0.55); }
+}
+.glow-orange { animation: pulseGlow 2.5s infinite; }
+
+@keyframes radarScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+.radar-scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(232, 120, 10, 0.8), transparent);
+  animation: radarScan 3s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Tactical Glassmorphism & Cards ─────────────────────────── */
+.glass-panel {
+  background: rgba(18, 24, 34, 0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(48, 54, 61, 0.8);
+}
+
+.glass-panel-accent {
+  background: linear-gradient(135deg, rgba(24, 30, 42, 0.95), rgba(15, 20, 30, 0.9));
+  border: 1px solid rgba(232, 120, 10, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Tactical Alert Banners ──────────────────────────────────── */
+.tactical-alert-warning {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(30, 15, 15, 0.4));
+  border-left: 4px solid #ef4444;
+  border-top: 1px solid rgba(239, 68, 68, 0.3);
+  border-right: 1px solid rgba(239, 68, 68, 0.2);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.tactical-alert-caution {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(30, 25, 15, 0.4));
+  border-left: 4px solid #f59e0b;
+  border-top: 1px solid rgba(245, 158, 11, 0.3);
+  border-right: 1px solid rgba(245, 158, 11, 0.2);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ── PDF Page Styles ─────────────────────────────────────────── */
+.react-pdf__Page {
+  @apply shadow-2xl transition-transform duration-300 ease-out;
+}
+.react-pdf__Page canvas {
+  @apply rounded-md mx-auto !important;
+}
+
+/* ── Step Blocks & Directive Badges ──────────────────────────── */
+.step-block {
+  @apply my-2.5 border-l-2 border-orange pl-3.5 bg-navy-700/40 py-2 rounded-r-lg hover:bg-navy-700/60 transition-colors;
+}
+.step-number {
+  @apply font-mono font-bold text-orange mr-2 tracking-wide;
+}
+
+/* ── Markdown Prose Typography ───────────────────────────────── */
+.prose-tactical h1, .prose-tactical h2, .prose-tactical h3 {
+  color: #f1f5f9;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-tactical p {
+  margin-bottom: 0.75rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+}
+
+.prose-tactical strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.prose-tactical ul {
+  list-style-type: none;
+  padding-left: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-tactical ul li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.prose-tactical ul li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: #e8780a;
+  font-weight: bold;
+  font-size: 1.1em;
+  line-height: 1.2;
+}
+
+.prose-tactical ol {
+  counter-reset: tactical-step;
+  padding-left: 0;
+  margin-bottom: 0.75rem;
+}
+
+.prose-tactical ol li {
+  counter-increment: tactical-step;
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
+}
+
+.prose-tactical ol li::before {
+  content: counter(tactical-step);
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  background: rgba(232, 120, 10, 0.18);
+  border: 1px solid rgba(232, 120, 10, 0.6);
+  color: #e8780a;
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose-tactical table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.82rem;
+  font-family: monospace;
+  background: rgba(14, 19, 27, 0.7);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(48, 54, 61, 0.6);
+}
+
+.prose-tactical th {
+  background: rgba(26, 34, 48, 0.9);
+  color: #e8780a;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(232, 120, 10, 0.3);
+}
+
+.prose-tactical td {
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+  color: #94a3b8;
+}
+
+.prose-tactical tr:hover td {
+  background: rgba(232, 120, 10, 0.05);
+  color: #f8fafc;
+}

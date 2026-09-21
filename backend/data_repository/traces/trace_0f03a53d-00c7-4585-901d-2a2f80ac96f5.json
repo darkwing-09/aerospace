@@ -1,0 +1,43 @@
+{
+  "run_id": "0f03a53d-00c7-4585-901d-2a2f80ac96f5",
+  "timestamp": "2026-08-30T22:32:47Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+  "plan": {
+    "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+    "aircraft": "mig21bis",
+    "parallel_tasks": [
+      "visual_schematic_rag",
+      "avionics_math_engine"
+    ],
+    "sequential_tasks": [
+      "safety_validation",
+      "command_synthesis"
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      144,
+      95,
+      23
+    ],
+    "math_computed": true,
+    "logistics_hits": 0
+  },
+  "response": "To address the request, I will provide a step-by-step procedure to engage the emergency fuel pumps and calculate the True Airspeed (TAS) for Mach 1.5 at an altitude of 10,000 meters.\n\n**Step-by-Step Procedure:**\n\n1. **Turn ON Emergency Fuel Pumps:**\n   - Locate the Emergency Fuel Pump Switch on the cockpit panel.\n   - Ensure that the Emergency Fuel Pump Switch is in the \"ON\" position (UP).\n   - Verify this switch by checking the corresponding indicator light, which should illuminate to confirm engagement.\n\n2. **Verify TAS Calculation for Mach 1.5 at 10000m:**\n   - Given the provided data:\n     - Mach = 1.5\n     - Altitude = 10,000 meters (a(10000.0m) = 98.4 m/s)\n   - TAS calculation formula is given by:\n     \\[\n     \\text{TAS} = \\text{Mach} \\times a(\\text{altitude})\n     \\]\n   - Substituting the values:\n     \\[\n     \\text{TAS} = 1.5 \\times 98.4 \\, \\text{m/s} = 147.6 \\, \\text{m/s}\n     \\]\n\n3. **Convert TAS to Knots:**\n   - Using the conversion factor \\(1 \\, \\text{knot} = 0.514444 \\, \\text{m/s}\\):\n     \\[\n     \\text{TAS in knots} = \\frac{\\text{TAS in m/s}}{0.514444} = \\frac{147.6}{0.514444} \\approx 287.3 \\, \\text{knots}\n     \\]\n\n**Final Calculation:**\n- True Airspeed (TAS) at Mach 1.5 and an altitude of 10,000 meters is approximately **287.3 knots**.\n\n**Note:** The emergency fuel pumps are engaged to ensure that the aircraft can continue flying even if its main fuel systems fail. This procedure should be performed in conjunction with other operational checks and preparations for flight.\n\n**Emergency Fuel Pumps Engagement Sequence:**\n1. Locate the Emergency Fuel Pump Switch.\n2. Ensure it is set to \"ON\" (UP).\n3. Verify the indicator light illuminates to confirm engagement.\n\n**TAS Calculation Result:**\n- TAS at Mach 1.5 and an altitude of 10,000 meters is approximately **287.3 knots**.\n\n[CAUTION] Ensure all other systems are operational and that the aircraft's fuel state is monitored closely, especially with external wing fuel tanks potentially empty as indicated by the FUEL PODS EMPTY A message on page 144 of the technical manual.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": true,
+    "latency_ms": 2392283.27
+  },
+  "latency_ms": 2392283.2741737366,
+  "cloud_synced": false
+}

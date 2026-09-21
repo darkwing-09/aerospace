@@ -1,0 +1,70 @@
+{
+  "run_id": "5b30ce89-15db-4d19-b12b-888bf8560259",
+  "timestamp": "2026-08-30T22:36:22Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+  "plan": {
+    "intent": "VISUAL_AND_PHYSICS",
+    "rationale": "Query involves cockpit instrumentation or layout along with flight calculations.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5-vl:7b",
+        "depends_on": []
+      },
+      {
+        "id": "avionics_physics",
+        "title": "Avionics Physics Engine",
+        "capability": "math",
+        "model": "qwen2.5-math:7b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic",
+          "avionics_physics"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b-instruct",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      144,
+      95,
+      23
+    ],
+    "math_computed": true,
+    "logistics_hits": 0
+  },
+  "response": "To address the request, I will provide a step-by-step procedure to engage the emergency fuel pumps and calculate the True Airspeed (TAS) for Mach 1.5 at an altitude of 10,000 meters.\n\n**Emergency Fuel Pump Sequence:**\n\n1. **Turn ON Emergency Fuel Pumps Switch**: Ensure that the Emergency Fuel Pumps Switch is set to the \"ON\" position.\n2. **Verify Operation**: Monitor the fuel gauges and ensure that the emergency pumps are functioning correctly by checking for an increase in fuel levels.\n\n**TAS Calculation at Mach 1.5 at 10,000 meters:**\n\nGiven:\n- Mach = 1.5\n- Altitude (h) = 10,000 meters\n\nUsing the standard atmosphere model and assuming a sea level temperature of 15\u00b0C:\n\n\\[ \\text{TAS} = \\text{Mach} \\times \\sqrt{\\frac{293}{\\text{Temperature}} \\times \\left(1 + \\frac{h}{46875}\\right)^{-0.5} - 1} \\]\n\nWhere:\n- Temperature at sea level (T) is approximately 288 K.\n- \\( h = 10,000 \\) meters.\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{\\frac{293}{288} \\times \\left(1 + \\frac{10000}{46875}\\right)^{-0.5}} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{\\frac{293}{288} \\times \\left(\\frac{46875 + 10000}{46875}\\right)^{-0.5}} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{\\frac{293}{288} \\times \\left(\\frac{56875}{46875}\\right)^{-0.5}} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{\\frac{293}{288} \\times \\left(1.205\\right)^{-0.5}} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{\\frac{293}{288} \\times 0.836} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times \\sqrt{7.44} - 1 \\]\n\n\\[ \\text{TAS} = 1.5 \\times 2.729 - 1 \\]\n\n\\[ \\text{TAS} = 3.8035 - 1 \\]\n\n\\[ \\text{TAS} = 863.4 \\, \\text{km/h} \\approx 873.2 \\, \\text{knots} \\]\n\n**Note:**\n- The TAS calculation assumes standard atmospheric conditions and does not account for variations in temperature or altitude.\n- Ensure that the aircraft is configured to operate at Mach 1.5, as exceeding this speed can lead to structural damage.\n\n**Conclusion:**\n\nThe emergency fuel pumps should be engaged immediately if there are indications of a fuel shortage. The calculated True Airspeed (TAS) for Mach 1.5 at an altitude of 10,000 meters is approximately **873.2 knots**.\n\nPlease ensure that the aircraft's systems are in proper condition and follow all safety protocols during this procedure.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": true,
+    "latency_ms": 493783.15
+  },
+  "latency_ms": 493783.1461429596,
+  "cloud_synced": false
+}

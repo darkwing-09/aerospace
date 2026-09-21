@@ -1,0 +1,43 @@
+{
+  "run_id": "6e0fd61a-c683-45e9-94c5-64798aed3d1e",
+  "timestamp": "2026-08-30T12:02:56Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "how fast we need to apply brake if the land is in moisture and the plane speed is 700 km per hour , and the fuel inside is about to end in 2  in , and runway is 2 km away ",
+  "plan": {
+    "query": "how fast we need to apply brake if the land is in moisture and the plane speed is 700 km per hour , and the fuel inside is about to end in 2  in , and runway is 2 km away ",
+    "aircraft": "mig21bis",
+    "parallel_tasks": [
+      "visual_schematic_rag",
+      "avionics_math_engine"
+    ],
+    "sequential_tasks": [
+      "safety_validation",
+      "command_synthesis"
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      112,
+      216,
+      125
+    ],
+    "math_computed": false,
+    "logistics_hits": 0
+  },
+  "response": "\n[Generation error: Model timeout \u2014 CPU inference too slow for this prompt size.]",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "VERIFIED_SAFE",
+    "safety_score": 98,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 88.0,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": false,
+    "latency_ms": 307962.58
+  },
+  "latency_ms": 307962.58091926575,
+  "cloud_synced": false
+}

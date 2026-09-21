@@ -1,0 +1,5 @@
+System,Pressure_PSI,Status
+Hydraulics,3000,NOMINAL
+Fuel Pump,45,NOMINAL
+Avionics Bus,28,STANDBY
+Oxygen Reg,1800,NOMINAL

@@ -1,0 +1,70 @@
+{
+  "run_id": "9c462523-f2cf-44b0-9534-457dbe44059b",
+  "timestamp": "2026-08-30T22:38:26Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "Show cockpit emergency fuel pump switch sequence and calculate TAS for Mach 1.5 at 10000m",
+  "plan": {
+    "intent": "VISUAL_AND_PHYSICS",
+    "rationale": "Query involves cockpit instrumentation or layout along with flight calculations.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5-vl:7b",
+        "depends_on": []
+      },
+      {
+        "id": "avionics_physics",
+        "title": "Avionics Physics Engine",
+        "capability": "math",
+        "model": "qwen2.5-math:7b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic",
+          "avionics_physics"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b-instruct",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      144,
+      95,
+      23
+    ],
+    "math_computed": true,
+    "logistics_hits": 0
+  },
+  "response": "To address the request, I will first provide the sequence of actions to engage the emergency fuel pumps and then calculate the True Airspeed (TAS) for a Mach number of 1.5 at an altitude of 10,000 meters.\n\n**Emergency Fuel Pump Sequence:**\n\n1. Turn ON the Emergency Fuel Pump Switch located on the overhead panel.\n2. Ensure that the Emergency Fuel Pump Control Lever is in the \"ON\" position.\n3. Verify that the emergency fuel pump indicator light illuminates to confirm engagement.\n\n**TAS Calculation for Mach 1.5 at 10,000 meters:**\n\nGiven:\n- Mach number (M) = 1.5\n- Altitude (h) = 10,000 meters\n\nUsing the formula for TAS in terms of Mach number and altitude:\n\n\\[ \\text{TAS} = M \\times a(h) \\]\n\nWhere \\( a(h) \\) is the speed of sound at altitude h.\n\nFrom the technical manual provided, we find that the speed of sound (a) at 10,000 meters is approximately 342.8 m/s.\n\n\\[ \\text{TAS} = 1.5 \\times 342.8 \\, \\text{m/s} = 514.2 \\, \\text{m/s} \\]\n\nConvert TAS from meters per second to kilometers per hour:\n\n\\[ \\text{TAS (km/h)} = 514.2 \\, \\text{m/s} \\times 3600 \\, \\frac{\\text{s}}{\\text{h}} = 18511.2 \\, \\text{km/h} \\]\n\nTherefore, the True Airspeed at Mach 1.5 and an altitude of 10,000 meters is approximately **18511.2 km/h**.\n\nPlease ensure that all systems are ready for takeoff as per the provided procedures and calculations.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": true,
+    "latency_ms": 299571.95
+  },
+  "latency_ms": 299571.95377349854,
+  "cloud_synced": false
+}

@@ -1,0 +1,62 @@
+{
+  "run_id": "421adb59-5e86-4fa2-b178-52f4875097c7",
+  "timestamp": "2026-09-07T16:52:31Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "Emergency engine relight checklist and cockpit switch sequence",
+  "plan": {
+    "intent": "SCHEMATIC_OR_PROCEDURE",
+    "rationale": "Query focuses on diagrams, switch locations, wiring, text content, or document steps.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5:3b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      194,
+      37,
+      75
+    ],
+    "math_computed": false,
+    "logistics_hits": 0
+  },
+  "response": "The provided documentation does not contain any information related to the emergency engine relight checklist or cockpit switch sequences for the MIG-21BIS aircraft. The extracted pages are focused on the GSh-23 23 mm cannon aiming method, pipper and fixed net settings, and cockpit equipment layout.\n\nTo provide you with accurate and relevant instructions, I would need to refer to specific sections of the flight manual that cover emergency engine relight procedures and cockpit switch sequences. Please consult pages related to \"Emergency Procedures\" or \"Engine Relighting\" in your MIG-21BIS aircraft's Flight Operations Manual (FOM) for detailed steps.\n\nIf you have access to these pages, I can provide guidance based on the information found there. Otherwise, please refer to the relevant manual and follow the procedures outlined within it.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": false,
+    "latency_ms": 337431.72
+  },
+  "latency_ms": 337431.72335624695,
+  "cloud_synced": false
+}

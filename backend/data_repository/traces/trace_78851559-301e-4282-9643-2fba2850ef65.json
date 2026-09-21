@@ -1,0 +1,43 @@
+{
+  "run_id": "78851559-301e-4282-9643-2fba2850ef65",
+  "timestamp": "2026-08-30T12:09:03Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "What is the emergency engine relight procedure and calculate fuel burn at afterburner?",
+  "plan": {
+    "query": "What is the emergency engine relight procedure and calculate fuel burn at afterburner?",
+    "aircraft": "mig21bis",
+    "parallel_tasks": [
+      "visual_schematic_rag",
+      "avionics_math_engine"
+    ],
+    "sequential_tasks": [
+      "safety_validation",
+      "command_synthesis"
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      139,
+      216,
+      112
+    ],
+    "math_computed": true,
+    "logistics_hits": 0
+  },
+  "response": "\n[Generation error: Model timeout \u2014 CPU inference too slow for this prompt size.]",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "CAUTION_REQUIRED",
+    "safety_score": 75,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 83.4,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": true,
+    "latency_ms": 302383.82
+  },
+  "latency_ms": 302383.8222026825,
+  "cloud_synced": false
+}

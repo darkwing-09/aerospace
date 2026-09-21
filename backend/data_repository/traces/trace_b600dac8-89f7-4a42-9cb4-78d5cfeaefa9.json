@@ -1,0 +1,60 @@
+{
+  "run_id": "b600dac8-89f7-4a42-9cb4-78d5cfeaefa9",
+  "timestamp": "2026-08-30T23:13:40Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "da_2026_syllabus",
+  "query": "WHATS THE SYLLABUS OF ML THIS YEAR ?",
+  "plan": {
+    "intent": "SCHEMATIC_OR_PROCEDURE",
+    "rationale": "Query focuses on cockpit switch locations, wiring, diagrams, or checklist steps.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5-vl:7b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b-instruct",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      1
+    ],
+    "math_computed": false,
+    "logistics_hits": 0
+  },
+  "response": "The provided context does not contain the syllabus for Machine Learning (ML) this year. Please provide the correct technical intelligence or syllabus details related to the DA-2026 aircraft.\n\nIf you need assistance with the DA-2026-SYLLABUS, I will require specific information from the relevant manual or schematic diagrams provided in the context.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "VERIFIED_SAFE",
+    "safety_score": 98,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 88.0,
+    "sources_consulted": 1,
+    "diagrams_verified": 1,
+    "math_verified": false,
+    "latency_ms": 34116.59
+  },
+  "latency_ms": 34116.59336090088,
+  "cloud_synced": false
+}

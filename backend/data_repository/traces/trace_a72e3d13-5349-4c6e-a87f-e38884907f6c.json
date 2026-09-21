@@ -1,0 +1,62 @@
+{
+  "run_id": "a72e3d13-5349-4c6e-a87f-e38884907f6c",
+  "timestamp": "2026-08-30T22:55:49Z",
+  "project": "aeromind-defense-intel",
+  "aircraft_id": "mig21bis",
+  "query": "the engine have short issues and not letting the engine start ?",
+  "plan": {
+    "intent": "SCHEMATIC_OR_PROCEDURE",
+    "rationale": "Query focuses on cockpit switch locations, wiring, diagrams, or checklist steps.",
+    "nodes": [
+      {
+        "id": "visual_schematic",
+        "title": "ColPali Visual Schematics",
+        "capability": "vision_table",
+        "model": "qwen2.5-vl:7b",
+        "depends_on": []
+      },
+      {
+        "id": "command_synthesis",
+        "title": "Command Synthesis Briefing",
+        "capability": "synthesis",
+        "model": "qwen2.5:3b",
+        "depends_on": [
+          "visual_schematic"
+        ]
+      },
+      {
+        "id": "safety_verification",
+        "title": "Flight Safety & SOP Audit",
+        "capability": "verification",
+        "model": "qwen2.5:3b-instruct",
+        "depends_on": [
+          "command_synthesis"
+        ]
+      }
+    ]
+  },
+  "agent_steps": {
+    "visual_pages": [
+      286,
+      148,
+      277
+    ],
+    "math_computed": false,
+    "logistics_hits": 0
+  },
+  "response": "Given the context of intercept missions, fuel drop tanks, and missiles being equipped on a MIG-21BIS aircraft, it is crucial to adhere to the specified operational limits. However, if there are issues with the engine preventing its start, immediate attention must be given to ensure safety and readiness for any mission.\n\n**Step 1:** \nTurn ON the Engine Start Control Unit (ESCU) located on the cockpit panel labeled \"ENGINE CONTROL\" (refer to page 286 of the manual).\n\n**Step 2:**\nVerify that the battery is fully charged. Ensure the battery switch is in the ON position, as indicated by a green light.\n\n**Step 3:**\nCheck the Engine Start Indicator (ESI) located on the \"ENGINE CONTROL\" panel for any indications of start issues such as flashing lights or warning signs. If ESI shows red or amber, this indicates an issue and should be reported to maintenance immediately.\n\n**Step 4:**\nIf there is no immediate indication of a problem with the battery or ESCU, proceed to check the Engine Start Control Unit (ESCU) for any fault codes that may indicate issues with the engine start system. Consult page 148 of the manual for guidance on how to access and interpret these codes.\n\n**Step 5:**\nIf the issue persists, consult the MIG-21BIS Maintenance Manual for specific troubleshooting steps related to engine start problems. This step is critical as continued operation under short-term issues could lead to further complications or damage.\n\n**Step 6:**\nIn case of a confirmed engine start failure, immediately execute emergency procedures outlined in the aircraft's Emergency Procedures section (refer to page 148 of the manual). Ensure all crew members are aware and prepared for any contingencies.\n\n**Step 7:**\nIf the issue is not resolved within a short timeframe, request immediate assistance from maintenance personnel. Do not attempt to start the engine under these conditions as it could lead to irreversible damage or safety hazards.\n\n**WARNING:** \nDo not continue with any mission-related operations until the engine can be reliably started and all systems are in proper working order.",
+  "evaluation": {
+    "faithfulness_score": 78,
+    "citation_score": 98,
+    "safety_compliance": "VERIFIED_SAFE",
+    "safety_score": 98,
+    "hallucination_risk": "MODERATE",
+    "overall_confidence": 88.0,
+    "sources_consulted": 3,
+    "diagrams_verified": 3,
+    "math_verified": false,
+    "latency_ms": 104433.35
+  },
+  "latency_ms": 104433.34698677063,
+  "cloud_synced": false
+}
