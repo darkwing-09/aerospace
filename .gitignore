@@ -1,5 +1,39 @@
-backend/models/
-backend/venv/
-*.safetensors
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+backend/models/
+*.safetensors
+
+# Environment & Secrets
+.env
+backend/.env
+*.env.local
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.npm
+npm-debug.log*
+
+# AeroMind runtime data & generated artifacts (untracked per QW8)
+backend/data_repository/uploads/
+backend/data_repository/traces/
+backend/data_repository/qdrant_db/
+backend/data_repository/page_images/
+backend/data_repository/adapter_scratch/
+
+# OS / Editor artifacts
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+.claude/
+.safetensors_cache.json
+

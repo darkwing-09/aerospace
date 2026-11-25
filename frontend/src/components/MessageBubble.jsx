@@ -161,15 +161,44 @@ const markdownComponents = {
   strong: ({ node, ...props }) => (
     <strong className="font-semibold text-white" {...props} />
   ),
-  code: ({ node, inline, ...props }) => (
-    inline ? (
-      <code className="text-xs font-mono bg-navy-900/90 text-orange px-1.5 py-0.5 rounded border border-navy-700" {...props} />
-    ) : (
-      <pre className="my-2.5 p-3 rounded-lg bg-[#070b10] border border-navy-700 text-xs font-mono text-gray-300 overflow-x-auto">
-        <code {...props} />
-      </pre>
+  code: ({ node, className, children, ...props }) => {
+    const isBlock = /language-(\w+)/.test(className || '') || String(children).includes('\n')
+    if (isBlock) {
+      return (
+        <pre className="my-2.5 p-3 rounded-lg bg-[#070b10] border border-navy-700 text-xs font-mono text-gray-300 overflow-x-auto">
+          <code className={className} {...props}>
+            {children}
+          </code>
+        </pre>
+      )
+    }
+    return (
+      <code className="text-xs font-mono bg-navy-900/90 text-orange px-1.5 py-0.5 rounded border border-navy-700" {...props}>
+        {children}
+      </code>
     )
+  },
+  img: ({ node, alt, src, ...props }) => (
+    // Egress guard: block external markdown images and render as inert text
+    <span className="inline-flex items-center text-xs font-mono text-gray-400 bg-navy-900 px-1.5 py-0.5 rounded border border-navy-700" title={src}>
+      [Image blocked: {alt || 'untrusted external image'}]
+    </span>
   ),
+  a: ({ node, href, children, ...props }) => {
+    const isExternal = href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//'))
+    if (isExternal) {
+      return (
+        <span className="text-gray-400 underline decoration-dotted text-xs font-mono" title={href}>
+          {children} ({href})
+        </span>
+      )
+    }
+    return (
+      <a href={href} className="text-orange hover:underline font-medium" {...props}>
+        {children}
+      </a>
+    )
+  },
   blockquote: ({ node, ...props }) => (
     <blockquote className="border-l-2 border-orange/80 pl-3.5 py-1.5 my-2.5 bg-navy-800/40 rounded-r-lg text-xs text-gray-300 italic" {...props} />
   ),

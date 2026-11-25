@@ -1,0 +1,14 @@
+# AeroMind System Thresholds & Circuit Breakers (PLAN §11.5, §11.6, Task 2.6)
+
+circuit_breaker:
+  failure_threshold: 3
+  cooldown_seconds: 60
+  health_check_timeout_seconds: 2.0
+
+continuation:
+  relevance_threshold: 0.75
+
+critic:
+  token_budget: 4096
+  max_retries: 2
+

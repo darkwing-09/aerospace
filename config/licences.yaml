@@ -1,0 +1,13 @@
+# AeroMind Approved Licences (ADR-0005, Plan §7.1, Phase 2.1)
+# Models with licences outside this allowlist are rejected or flagged.
+
+approved:
+  - apache-2.0
+  - mit
+  - qwen-research
+  - gemma-terms
+  - bsd-3-clause
+
+prohibited:
+  - proprietary-unlicensed
+  - cc-by-nc-4.0  # Commercial restriction unless explicitly approved

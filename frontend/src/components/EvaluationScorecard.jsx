@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Check } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 
 /**
  * EvaluationScorecard.jsx
  * ───────────────────────────────────────────────────────────────
  * Plain-language confidence and grounding confirmation.
- * Shows "Sources checked ✓" by default, with an optional details expander.
+ * Honestly labels unverified heuristic evaluations.
+ * Omits invented default numbers.
  */
 
 export default function EvaluationScorecard({ evaluation, onOpenInspector }) {
@@ -13,24 +14,22 @@ export default function EvaluationScorecard({ evaluation, onOpenInspector }) {
 
   if (!evaluation) return null
 
-  const {
-    faithfulness_score = 85,
-    citation_score = 95,
-    safety_compliance = 'PASSED',
-    diagrams_verified = 0,
-    latency_ms = 0,
-  } = evaluation
+  const faithfulness = evaluation.heuristic_faithfulness ?? evaluation.faithfulness_score
+  const citation = evaluation.heuristic_citation ?? evaluation.citation_score
+  const safety_compliance = evaluation.safety_compliance ?? 'UNVERIFIED'
+  const diagrams_verified = evaluation.diagrams_verified ?? 0
+  const latency_ms = evaluation.latency_ms
 
-  const isSafetyCritical = safety_compliance !== 'PASSED'
+  const isSafetyCritical = safety_compliance === 'CAUTION_REQUIRED' || safety_compliance === 'FAILED'
 
   return (
     <div className="mt-3 pt-2.5 border-t border-navy-700/60 text-xs">
       {/* Calm Summary Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className="text-emerald-400 font-semibold flex items-center space-x-1.5">
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Sources checked</span>
+          <span className="text-amber-400 font-medium flex items-center space-x-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+            <span>Unverified (heuristic)</span>
           </span>
           {isSafetyCritical && (
             <span className="text-[10px] bg-red-950/60 text-red-400 border border-red-800 px-1.5 py-0.5 rounded font-medium">
@@ -58,35 +57,39 @@ export default function EvaluationScorecard({ evaluation, onOpenInspector }) {
           <div className="p-2 rounded bg-navy-800/80 border border-navy-700">
             <div className="text-[10px] text-gray-400">Manual Grounding</div>
             <div className="text-sm font-semibold text-gray-200 mt-0.5">
-              {faithfulness_score}%
+              {faithfulness != null ? `${faithfulness}%` : '—'}
             </div>
-            <div className="w-full bg-navy-700 h-1 rounded-full mt-1.5 overflow-hidden">
-              <div
-                className="bg-orange h-full rounded-full"
-                style={{ width: `${faithfulness_score}%` }}
-              ></div>
-            </div>
+            {faithfulness != null && (
+              <div className="w-full bg-navy-700 h-1 rounded-full mt-1.5 overflow-hidden">
+                <div
+                  className="bg-orange h-full rounded-full"
+                  style={{ width: `${Math.min(100, Math.max(0, faithfulness))}%` }}
+                ></div>
+              </div>
+            )}
           </div>
 
           {/* Metric 2 */}
           <div className="p-2 rounded bg-navy-800/80 border border-navy-700">
             <div className="text-[10px] text-gray-400">Citation Accuracy</div>
             <div className="text-sm font-semibold text-gray-200 mt-0.5">
-              {citation_score}%
+              {citation != null ? `${citation}%` : '—'}
             </div>
-            <div className="w-full bg-navy-700 h-1 rounded-full mt-1.5 overflow-hidden">
-              <div
-                className="bg-success h-full rounded-full"
-                style={{ width: `${citation_score}%` }}
-              ></div>
-            </div>
+            {citation != null && (
+              <div className="w-full bg-navy-700 h-1 rounded-full mt-1.5 overflow-hidden">
+                <div
+                  className="bg-success h-full rounded-full"
+                  style={{ width: `${Math.min(100, Math.max(0, citation))}%` }}
+                ></div>
+              </div>
+            )}
           </div>
 
           {/* Metric 3 */}
           <div className="p-2 rounded bg-navy-800/80 border border-navy-700">
             <div className="text-[10px] text-gray-400">Diagrams Checked</div>
             <div className="text-sm font-semibold text-gray-200 mt-0.5">
-              {diagrams_verified} verified
+              {diagrams_verified != null ? `${diagrams_verified} checked` : '—'}
             </div>
           </div>
 
@@ -94,7 +97,7 @@ export default function EvaluationScorecard({ evaluation, onOpenInspector }) {
           <div className="p-2 rounded bg-navy-800/80 border border-navy-700">
             <div className="text-[10px] text-gray-400">Response Time</div>
             <div className="text-sm font-semibold text-gray-200 mt-0.5">
-              {Math.round(latency_ms)} ms
+              {latency_ms != null ? `${Math.round(latency_ms)} ms` : '—'}
             </div>
           </div>
         </div>

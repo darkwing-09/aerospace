@@ -1,4 +1,0 @@
-FLIGHT LOG RECORDER - MISSION ALPHA 01
-Altitude: 10500m
-Mach: 1.4
-Fuel: 2100kg

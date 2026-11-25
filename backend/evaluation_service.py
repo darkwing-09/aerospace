@@ -40,52 +40,67 @@ class EvaluationService:
         ]
 
         grounded_count = 0
-        total_checked = max(1, len(keywords))
-        for kw in keywords:
-            if kw in context_text:
-                grounded_count += 1
+        total_checked = len(keywords)
+        if total_checked > 0:
+            for kw in keywords:
+                if kw in context_text:
+                    grounded_count += 1
+            raw_faithfulness = round((grounded_count / total_checked) * 100, 1)
+        else:
+            raw_faithfulness = 0.0
 
-        raw_faithfulness = (grounded_count / total_checked) * 100
-        # Scale into reasonable range (75% - 99%)
-        faithfulness_score = min(99, max(78, int(raw_faithfulness + 35)))
+        heuristic_faithfulness = raw_faithfulness
 
-        # 2. Citation Accuracy Check
-        citation_score = 95
+        # 2. Citation Accuracy Check (Heuristic)
         if referenced_page:
             # Check if any retrieved context matches this page
             page_found = any(c.get("page_number") == referenced_page for c in retrieved_contexts)
-            citation_score = 98 if page_found else 82
+            heuristic_citation = 100.0 if page_found else 0.0
+        else:
+            heuristic_citation = None
 
-        # 3. Safety Compliance Evaluation
+        # 3. Safety Compliance Evaluation (Heuristic)
         is_emergency_query = any(
             w in query.lower()
             for w in ["emergency", "fire", "failure", "flameout", "leak", "warning", "caution", "stall", "loss"]
         )
         has_warning_tag = "warning:" in response_lower or "caution:" in response_lower or "⚠️" in response_text
 
-        if is_emergency_query:
+        if not response_text.strip():
+            safety_compliance = "EMPTY_RESPONSE"
+            safety_score = 0.0
+        elif is_emergency_query:
             safety_compliance = "PASSED" if has_warning_tag else "CAUTION_REQUIRED"
-            safety_score = 100 if has_warning_tag else 75
+            safety_score = 100.0 if has_warning_tag else 0.0
         else:
-            safety_compliance = "VERIFIED_SAFE"
-            safety_score = 98
+            # Honest labelling: non-emergency queries are not formally verified without the Critic
+            safety_compliance = "UNVERIFIED"
+            safety_score = 100.0
 
         # 4. Hallucination Risk
-        if faithfulness_score >= 90:
-            hallucination_risk = "VERY_LOW"
-        elif faithfulness_score >= 80:
+        if heuristic_faithfulness >= 80:
             hallucination_risk = "LOW"
-        else:
+        elif heuristic_faithfulness >= 50:
             hallucination_risk = "MODERATE"
+        else:
+            hallucination_risk = "HIGH"
 
-        # 5. Overall Confidence
-        overall_confidence = round(
-            (faithfulness_score * 0.5) + (citation_score * 0.3) + (safety_score * 0.2), 1
-        )
+        # 5. Overall Confidence (Heuristic)
+        if not response_text.strip():
+            overall_confidence = 0.0
+        else:
+            citation_weight = 0.3 if heuristic_citation is not None else 0.0
+            faith_weight = 0.7 if heuristic_citation is None else 0.5
+            safety_weight = 0.2 if heuristic_citation is not None else 0.3
+            score = (heuristic_faithfulness * faith_weight) + (safety_score * safety_weight)
+            if heuristic_citation is not None:
+                score += (heuristic_citation * citation_weight)
+            overall_confidence = round(score, 1)
 
         return {
-            "faithfulness_score": faithfulness_score,
-            "citation_score": citation_score,
+            "heuristic_faithfulness": heuristic_faithfulness,
+            "heuristic_citation": heuristic_citation,
+            "heuristic_safety": safety_score,
             "safety_compliance": safety_compliance,
             "safety_score": safety_score,
             "hallucination_risk": hallucination_risk,
@@ -94,6 +109,10 @@ class EvaluationService:
             "diagrams_verified": sum(1 for c in retrieved_contexts if c.get("is_schematic") or c.get("is_diagram")),
             "math_verified": bool(math_result),
             "latency_ms": round(latency_ms, 2),
+            "is_heuristic": True,
+            # Backwards compatibility aliases
+            "faithfulness_score": heuristic_faithfulness,
+            "citation_score": heuristic_citation if heuristic_citation is not None else 0.0,
         }
 
 

@@ -1,0 +1,31 @@
+{
+  "positive_case": {
+    "doc_a": {
+      "id": "maint_rep_01",
+      "text": "Maintenance Report: Aircraft #21 Main Fuel Pump 104 pressure dropped below 20 PSI during high-altitude climb on 2026-05-10. Emergency inspection of fuel line required.",
+      "entities": ["Main Fuel Pump 104", "Aircraft #21"]
+    },
+    "doc_b": {
+      "id": "telem_log_01",
+      "text": "Telemetry Log 2026-05-10: P-104 fuel delivery pressure telemetry recorded sudden drop to 18 PSI at FL250 on tail #21. Corroborates fuel pump subsystem failure.",
+      "entities": ["P-104", "tail #21"]
+    },
+    "expected_related": true,
+    "expected_edge_type": "CORROBORATES"
+  },
+  "negative_case": {
+    "doc_a": {
+      "id": "nav_debrief_99",
+      "text": "Flight Navigation Debrief 2026-05-10: Pilot completed Waypoint 104 crossing on heading 270 at 10:15. Radar transponder check normal.",
+      "entities": ["Waypoint 104", "Radar Transponder"]
+    },
+    "doc_b": {
+      "id": "warehouse_po_99",
+      "text": "Depot Supply Requisition 2026-05-10: Logistics order placed for Storage Bin 104 containing replacement hydraulic O-rings and gaskets.",
+      "entities": ["Storage Bin 104", "Hydraulic O-rings"]
+    },
+    "expected_related": false,
+    "expected_edge_type": "NO_RELIABLE_CONNECTION"
+  }
+}
+

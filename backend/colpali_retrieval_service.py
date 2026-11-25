@@ -136,10 +136,14 @@ class ColPaliRetrievalService:
     def _generate_fallback_multivector(self, text: str, is_schematic: bool, is_diagram: bool, seed_id: int) -> List[List[float]]:
         """
         Deterministic multi-vector generator for layout/schematic visual features.
-        Generates [num_tokens, 128] multi-vectors used when ColQwen2 weights are downloading.
+        Uses sha256 hashing to guarantee process-invariant, deterministic vectors.
         """
+        import hashlib
         import numpy as np
-        rng = np.random.RandomState(abs(hash(f"{text[:100]}_{seed_id}")) % (2**32))
+
+        seed_str = f"{text[:100]}_{seed_id}"
+        seed_hash = int(hashlib.sha256(seed_str.encode("utf-8")).hexdigest()[:8], 16)
+        rng = np.random.RandomState(seed_hash)
         num_patches = 16
         vecs = rng.randn(num_patches, self.dimension).astype(np.float32)
 
@@ -151,7 +155,7 @@ class ColPaliRetrievalService:
 
         # Term signal projection
         for i, word in enumerate(text.lower().split()[:num_patches]):
-            w_hash = abs(hash(word)) % self.dimension
+            w_hash = int(hashlib.sha256(word.encode("utf-8")).hexdigest()[:8], 16) % self.dimension
             vecs[i % num_patches, w_hash] += 3.0
 
         # Normalize
@@ -159,14 +163,15 @@ class ColPaliRetrievalService:
         return (vecs / norms).tolist()
 
     def _generate_fallback_query_vector(self, query: str) -> List[List[float]]:
-        """Generates query multi-vector [num_query_tokens, 128]."""
+        """Generates query multi-vector [num_query_tokens, 128] deterministically."""
+        import hashlib
         import numpy as np
         tokens = query.lower().split()
         num_tokens = max(1, len(tokens))
         vecs = np.zeros((num_tokens, self.dimension), dtype=np.float32)
 
         for i, word in enumerate(tokens):
-            w_hash = abs(hash(word)) % self.dimension
+            w_hash = int(hashlib.sha256(word.encode("utf-8")).hexdigest()[:8], 16) % self.dimension
             vecs[i, w_hash] = 4.0
             if any(v in word for v in ["schematic", "cockpit", "switch", "hydraulic", "panel", "diagram"]):
                 vecs[i, :16] += 2.0

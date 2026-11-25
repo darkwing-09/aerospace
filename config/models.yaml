@@ -1,0 +1,460 @@
+# AeroMind 2.0 Model Registry (ADR-0005, ADR-0007)
+# Single source of truth for model capability mapping across hardware tiers.
+# All local endpoints MUST be loopback or internal. No :cloud models permitted.
+
+version: 1
+
+local:
+  cpu_lite:
+    - name: qwen3-4b-instruct-2507-q4
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3:4b-instruct-2507-q4_K_M
+      capabilities: [general_reasoning, planning, drafting, summarization, classification, math, extraction]
+      max_context: 32768
+      default: true
+      version: "sha256:0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 3.5
+      quant: Q4_K_M
+      tool_calling: json_mode
+      prompt_profile: chatml
+      keep_alive: "30m"
+      licence: apache-2.0
+
+    - name: qwen2.5-coder-1.5b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5-coder:1.5b
+      capabilities: [code_gen, code_review, debugging]
+      max_context: 32768
+      default: false
+      version: "sha256:d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 2.0
+      quant: Q4_K_M
+      tool_calling: json_mode
+      prompt_profile: chatml
+      keep_alive: "30m"
+      licence: apache-2.0
+
+    - name: qwen3-vl-2b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3-vl:2b
+      capabilities: [vision, ocr_assist]
+      max_context: 16384
+      default: false
+      version: "sha256:0635d9d857d497aeadba3d7d27485746c50554446f9f6ec01ef39788221adbe8"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 2.5
+      quant: Q4_K_M
+      tool_calling: json_mode
+      prompt_profile: chatml
+      keep_alive: "30m"
+      licence: apache-2.0
+
+    - name: qwen2.5-3b-verifier
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5:3b
+      capabilities: [evaluation]
+      max_context: 8192
+      default: false
+      version: "sha256:357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 2.5
+      quant: Q4_K_M
+      tool_calling: json_mode
+      prompt_profile: chatml
+      keep_alive: "30m"
+      licence: qwen-research
+
+    - name: nomic-embed-text
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: nomic-embed-text
+      capabilities: [embedding]
+      max_context: 8192
+      default: false
+      version: "sha256:0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 1.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: none
+      keep_alive: "30m"
+      licence: apache-2.0
+
+    - name: mistral-7b-finetuned
+      provider: transformers
+      endpoint: http://127.0.0.1:11434
+      model_tag: backend/models
+      capabilities: [general_reasoning, drafting, planning]
+      max_context: 8192
+      default: false
+      version: "sha256:7ea6e0ab35decc2f37f03dedff027856d3565f3c292ac77426099c682cd0c2ea"
+      rank: 2
+      tier: medium
+      vram_gb: 0
+      ram_gb: 8.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: alpaca
+      keep_alive: "cold"
+      licence: apache-2.0
+
+  gpu_standard:
+    - name: qwen3-8b-standard
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3:8b
+      capabilities: [general_reasoning, planning, drafting, summarization, classification, math, extraction]
+      max_context: 32768
+      default: true
+      version: "sha256:qwen3-8b"
+      rank: 1
+      tier: medium
+      vram_gb: 6
+      ram_gb: 4
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen2.5-coder-7b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5-coder:7b
+      capabilities: [code_gen, code_review, debugging]
+      max_context: 32768
+      default: false
+      version: "sha256:qwen2.5-coder-7b"
+      rank: 1
+      tier: medium
+      vram_gb: 5
+      ram_gb: 4
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen3-vl-4b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3-vl:4b
+      capabilities: [vision, ocr_assist]
+      max_context: 16384
+      default: false
+      version: "sha256:qwen3-vl-4b"
+      rank: 1
+      tier: medium
+      vram_gb: 4
+      ram_gb: 4
+      quant: Q4_K_M
+      tool_calling: json_mode
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: gemma3-12b-eval
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: gemma3:12b
+      capabilities: [evaluation]
+      max_context: 8192
+      default: false
+      version: "sha256:gemma3-12b"
+      rank: 1
+      tier: medium
+      vram_gb: 8
+      ram_gb: 4
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: gemma-terms
+
+    - name: nomic-embed-text
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: nomic-embed-text
+      capabilities: [embedding]
+      max_context: 8192
+      default: false
+      version: "sha256:nomic-embed-text"
+      rank: 1
+      tier: small
+      vram_gb: 0.5
+      ram_gb: 1.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: none
+      licence: apache-2.0
+
+  gpu_high:
+    - name: qwen3-14b-high
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3:14b
+      capabilities: [general_reasoning, planning, drafting, summarization, classification, math, extraction]
+      max_context: 32768
+      default: true
+      version: "sha256:qwen3-14b"
+      rank: 1
+      tier: large
+      vram_gb: 10
+      ram_gb: 8
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen2.5-coder-14b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5-coder:14b
+      capabilities: [code_gen, code_review, debugging]
+      max_context: 32768
+      default: false
+      version: "sha256:qwen2.5-coder-14b"
+      rank: 1
+      tier: large
+      vram_gb: 10
+      ram_gb: 8
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen3-vl-8b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3-vl:8b
+      capabilities: [vision, ocr_assist]
+      max_context: 16384
+      default: false
+      version: "sha256:qwen3-vl-8b"
+      rank: 1
+      tier: large
+      vram_gb: 6
+      ram_gb: 8
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: gemma3-12b-eval
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: gemma3:12b
+      capabilities: [evaluation]
+      max_context: 8192
+      default: false
+      version: "sha256:gemma3-12b"
+      rank: 1
+      tier: medium
+      vram_gb: 8
+      ram_gb: 4
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: gemma-terms
+
+    - name: nomic-embed-text
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: nomic-embed-text
+      capabilities: [embedding]
+      max_context: 8192
+      default: false
+      version: "sha256:nomic-embed-text"
+      rank: 1
+      tier: small
+      vram_gb: 0.5
+      ram_gb: 1.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: none
+      licence: apache-2.0
+
+  gpu_multi:
+    - name: qwen3-32b-multi
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3:32b
+      capabilities: [general_reasoning, planning, drafting, summarization, classification, math, extraction]
+      max_context: 32768
+      default: true
+      version: "sha256:qwen3-32b"
+      rank: 1
+      tier: large
+      vram_gb: 20
+      ram_gb: 16
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen2.5-coder-32b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5-coder:32b
+      capabilities: [code_gen, code_review, debugging]
+      max_context: 32768
+      default: false
+      version: "sha256:qwen2.5-coder-32b"
+      rank: 1
+      tier: large
+      vram_gb: 20
+      ram_gb: 16
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen2.5vl-32b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5vl:32b
+      capabilities: [vision, ocr_assist]
+      max_context: 16384
+      default: false
+      version: "sha256:qwen2.5vl-32b"
+      rank: 1
+      tier: large
+      vram_gb: 20
+      ram_gb: 16
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: qwen-research
+
+    - name: gemma3-27b-eval
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: gemma3:27b
+      capabilities: [evaluation]
+      max_context: 8192
+      default: false
+      version: "sha256:gemma3-27b"
+      rank: 1
+      tier: large
+      vram_gb: 16
+      ram_gb: 16
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: gemma-terms
+
+    - name: nomic-embed-text
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: nomic-embed-text
+      capabilities: [embedding]
+      max_context: 8192
+      default: false
+      version: "sha256:nomic-embed-text"
+      rank: 1
+      tier: small
+      vram_gb: 0.5
+      ram_gb: 1.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: none
+      licence: apache-2.0
+
+  apple_full:
+    - name: qwen3-14b-apple
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3:14b
+      capabilities: [general_reasoning, planning, drafting, summarization, classification, math, extraction]
+      max_context: 32768
+      default: true
+      version: "sha256:qwen3-14b"
+      rank: 1
+      tier: large
+      vram_gb: 0
+      ram_gb: 12
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen2.5-coder-14b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen2.5-coder:14b
+      capabilities: [code_gen, code_review, debugging]
+      max_context: 32768
+      default: false
+      version: "sha256:qwen2.5-coder-14b"
+      rank: 1
+      tier: large
+      vram_gb: 0
+      ram_gb: 12
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: qwen3-vl-8b
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: qwen3-vl:8b
+      capabilities: [vision, ocr_assist]
+      max_context: 16384
+      default: false
+      version: "sha256:qwen3-vl-8b"
+      rank: 1
+      tier: large
+      vram_gb: 0
+      ram_gb: 8
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: apache-2.0
+
+    - name: gemma3-12b-eval
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: gemma3:12b
+      capabilities: [evaluation]
+      max_context: 8192
+      default: false
+      version: "sha256:gemma3-12b"
+      rank: 1
+      tier: medium
+      vram_gb: 0
+      ram_gb: 8
+      quant: Q4_K_M
+      tool_calling: native
+      prompt_profile: chatml
+      licence: gemma-terms
+
+    - name: nomic-embed-text
+      provider: ollama
+      endpoint: http://127.0.0.1:11434
+      model_tag: nomic-embed-text
+      capabilities: [embedding]
+      max_context: 8192
+      default: false
+      version: "sha256:nomic-embed-text"
+      rank: 1
+      tier: small
+      vram_gb: 0
+      ram_gb: 1.0
+      quant: F16
+      tool_calling: none
+      prompt_profile: none
+      licence: apache-2.0
+

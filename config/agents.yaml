@@ -1,0 +1,54 @@
+# AeroMind 2.0 Agent Configuration (PLAN §6, §7.4, ADR-0007)
+# Per-hardware-tier agent enablement, capacity parameters, and tool allocations.
+
+version: 1
+
+agent_tools:
+  main: []
+  execution: [sandbox_exec, kb_search]
+  coding: [sandbox_exec]
+  retrieval: [kb_search, doc_inspect]
+  data_analysis: [math_eval, csv_search]
+  multimodal: [page_image_inspect]
+  multimodal_ocr: [page_image_inspect]
+  critic: [critic_verify]
+  memory: [workspace_memory_read, workspace_memory_write]
+  correlation: [cross_doc_correlate]
+  optimization: [perf_audit]
+
+tiers:
+  cpu_lite:
+    enabled_agents: [main, execution, retrieval, data_analysis, multimodal_ocr, critic, memory]
+    disabled_agents: [coding, correlation, optimization, colpali, video]
+    max_parallel_llm_calls: 1
+    max_plan_depth: 3
+    retry_budget: 2
+
+  gpu_standard:
+    enabled_agents: [main, execution, coding, retrieval, data_analysis, multimodal, critic, memory]
+    disabled_agents: [correlation, optimization, colpali]
+    max_parallel_llm_calls: 2
+    max_plan_depth: 5
+    retry_budget: 3
+
+  gpu_high:
+    enabled_agents: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali]
+    disabled_agents: [optimization]
+    max_parallel_llm_calls: 3
+    max_plan_depth: 6
+    retry_budget: 3
+
+  gpu_multi:
+    enabled_agents: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali, optimization]
+    disabled_agents: []
+    max_parallel_llm_calls: 6
+    max_plan_depth: 6
+    retry_budget: 4
+
+  apple_full:
+    enabled_agents: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali, optimization]
+    disabled_agents: []
+    max_parallel_llm_calls: 3
+    max_plan_depth: 6
+    retry_budget: 3
+

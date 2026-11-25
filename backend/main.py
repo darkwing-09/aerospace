@@ -6,6 +6,7 @@ Multi-Agent SLM Orchestration, ColPali Visual RAG, Universal Ingestion,
 Session-Scoped Document Uploads, LangSmith Tracing, and Evaluation.
 """
 
+import os
 import re
 import asyncio
 import json
@@ -19,7 +20,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from pydantic import BaseModel
 
-from config import settings
+from config import settings, HARDWARE
+from security.paths import UnsafePathError, safe_filename, safe_identifier, safe_join
+from ingestion_adapter import UnsafeArchiveError
 from model_service import ModelService
 from pdf_service import pdf_svc
 from visual_rag_service import visual_rag_service
@@ -38,6 +41,7 @@ model_svc = ModelService()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("[AeroMind] Initializing Defense Avionics Platform…")
+    print(f"[AeroMind] Hardware tier: {HARDWARE['label']} ({HARDWARE['tier']}) — {HARDWARE['reason']}")
     # Initialize visual RAG index for default manual in background if present
     mig_path = Path(settings.PDF_DIR) / "mig21bis.pdf"
     if mig_path.exists():
@@ -82,6 +86,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/health")
 async def health():
+    models = await model_svc.check_configured_models()
     return {
         "status": "ok",
         "model_loaded": model_svc.is_loaded,
@@ -91,7 +96,24 @@ async def health():
         "langsmith_cloud_enabled": langsmith_service.is_cloud_enabled(),
         "visual_rag_enabled": settings.ENABLE_VISUAL_RAG,
         "document_count": len(universal_ingestion.list_all_documents()),
+        # QW11 / ADR-0007: which device tier was selected at startup and why.
+        "hardware": HARDWARE,
+        # QW1: configured models that Ollama doesn't have (they now fail loudly).
+        "models": models,
     }
+
+
+def _max_upload_bytes() -> int:
+    return settings.MAX_UPLOAD_MB * 1024 * 1024
+
+
+async def _read_upload_limited(file: UploadFile) -> bytes:
+    """Read an upload, refusing anything over MAX_UPLOAD_MB (QW3)."""
+    limit = _max_upload_bytes()
+    content = await file.read(limit + 1)
+    if len(content) > limit:
+        raise HTTPException(413, f"File exceeds the {settings.MAX_UPLOAD_MB} MB upload limit.")
+    return content
 
 
 @app.get("/api/aircraft")
@@ -140,14 +162,20 @@ async def upload_universal_file(
     description: Optional[str] = Form(None),
 ):
     try:
+        filename = safe_filename(file.filename)
+        content = await _read_upload_limited(file)
         result = await universal_ingestion.ingest_file(
-            file_obj=file,
-            filename=file.filename,
+            file_obj=content,
+            filename=filename,
             category=category,
             custom_name=custom_name,
             description=description,
         )
         return {"success": True, "document": result}
+    except (UnsafePathError, UnsafeArchiveError) as e:
+        raise HTTPException(400, f"Rejected upload: {e}")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(500, f"Ingestion error: {str(e)}")
 
@@ -163,15 +191,16 @@ async def session_document_upload(
     Normalizes to standardized document package and indexes in ColPali.
     """
     try:
-        sess = session_id or str(uuid.uuid4())[:8]
-        stem = Path(file.filename).stem.lower().replace(" ", "_").replace("-", "_")
-        doc_id = f"sess_{sess}_{stem}"
+        filename = safe_filename(file.filename)
+        sess = safe_identifier(session_id, "session_id") if session_id else str(uuid.uuid4())[:8]
+        stem = Path(filename).stem.lower().replace(" ", "_").replace("-", "_")
+        doc_id = safe_identifier(f"sess_{sess}_{stem}", "document id")
 
         temp_uploads = Path(settings.UPLOADS_DIR)
         temp_uploads.mkdir(parents=True, exist_ok=True)
-        dest_path = temp_uploads / f"{doc_id}_{file.filename}"
+        dest_path = safe_join(temp_uploads, f"{doc_id}_{filename}")
 
-        content = await file.read()
+        content = await _read_upload_limited(file)
         with open(dest_path, "wb") as f:
             f.write(content)
 
@@ -185,8 +214,8 @@ async def session_document_upload(
         pdf_target = pkg.get("pdf_path")
         universal_ingestion.documents[doc_id] = {
             "id": doc_id,
-            "name": file.filename,
-            "filename": file.filename,
+            "name": filename,
+            "filename": filename,
             "file_path": str(pdf_target or dest_path),
             "file_type": pkg.get("file_type", "pdf"),
             "category": "SESSION_UPLOAD",
@@ -217,10 +246,14 @@ async def session_document_upload(
             "success": True,
             "doc_id": doc_id,
             "session_id": sess,
-            "name": file.filename,
+            "name": filename,
             "total_pages": pkg.get("total_pages", 1),
             "file_type": pkg.get("file_type", "pdf"),
         }
+    except (UnsafePathError, UnsafeArchiveError) as e:
+        raise HTTPException(400, f"Rejected upload: {e}")
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         print(f"[SessionUpload Error]:\n{traceback.format_exc()}")
@@ -287,9 +320,14 @@ async def serve_pdf(aircraft_id: str):
 
 @app.post("/api/pdf/upload/{aircraft_id}")
 async def upload_pdf(aircraft_id: str, file: UploadFile = File(...)):
-    if not file.filename.endswith(".pdf"):
+    if not (file.filename or "").lower().endswith(".pdf"):
         raise HTTPException(400, "File must be a PDF.")
-    result = await pdf_svc.save_pdf(aircraft_id, file)
+    try:
+        safe_identifier(aircraft_id, "aircraft_id")
+        content = await _read_upload_limited(file)
+    except UnsafePathError as e:
+        raise HTTPException(400, f"Rejected upload: {e}")
+    result = await pdf_svc.save_pdf(aircraft_id, content)
     return result
 
 
@@ -321,7 +359,16 @@ async def chat_stream(req: ChatRequest):
 
     async def event_generator():
         try:
-            if settings.ENABLE_MULTI_AGENT:
+            if getattr(settings, "ENABLE_GRAPH", False) or os.environ.get("ENABLE_GRAPH", "false").lower() == "true":
+                from orchestration.graph import stream_graph_sse_async
+                user_query = req.messages[-1].content
+                async for event in stream_graph_sse_async(
+                    task=user_query,
+                    workspace_id=target_id,
+                    conversation_id=req.session_id,
+                ):
+                    yield event
+            elif settings.ENABLE_MULTI_AGENT:
                 async for event in multi_agent_orchestrator.execute_query_stream(
                     target_id, messages_dicts, model_svc
                 ):

@@ -95,8 +95,11 @@ WARNING: Minimum airspeed for relight is 550 km/h."""
     print("Evaluation Report:")
     for k, v in report.items():
         print(f"  • {k}: {v}")
-    assert report["faithfulness_score"] >= 75
+    # Honest evaluation assertion: unfloored raw ratio for this fixture is 40.0% (QW4)
+    assert report["heuristic_faithfulness"] == 40.0
+    assert report["faithfulness_score"] == 40.0
     assert report["safety_compliance"] == "PASSED"
+    assert report["is_heuristic"] is True
     print("✓ Evaluation Service OK")
 
 

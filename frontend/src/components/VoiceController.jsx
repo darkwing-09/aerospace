@@ -15,6 +15,8 @@ export default function VoiceController({ onVoiceQuery, onTranscript, isStreamin
   const [speechSupported, setSpeechSupported] = useState(true)
   const recognitionRef = useRef(null)
   const transcriptRef = useRef('')
+  const onTranscriptRef = useRef(onTranscript)
+  onTranscriptRef.current = onTranscript
 
   useEffect(() => {
     const SpeechRecognition =
@@ -51,8 +53,8 @@ export default function VoiceController({ onVoiceQuery, onTranscript, isStreamin
       transcriptRef.current = fullText
 
       // Live stream directly into chat input textarea!
-      if (onTranscript && fullText) {
-        onTranscript(fullText)
+      if (onTranscriptRef.current && fullText) {
+        onTranscriptRef.current(fullText)
       }
     }
 
@@ -67,8 +69,8 @@ export default function VoiceController({ onVoiceQuery, onTranscript, isStreamin
       setIsListening(false)
       // Commit transcript if any was recorded
       const captured = transcriptRef.current.trim()
-      if (captured && onTranscript) {
-        onTranscript(captured)
+      if (captured && onTranscriptRef.current) {
+        onTranscriptRef.current(captured)
       }
     }
 
@@ -79,7 +81,7 @@ export default function VoiceController({ onVoiceQuery, onTranscript, isStreamin
         recognition.stop()
       } catch (e) {}
     }
-  }, [onTranscript])
+  }, [])
 
   const toggleListening = () => {
     if (!speechSupported || isStreaming) return

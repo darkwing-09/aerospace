@@ -24,6 +24,14 @@ from PIL import Image
 
 from config import settings
 from visual_rag_service import visual_rag_service
+from security.paths import UnsafePathError, safe_join
+
+
+class UnsafeArchiveError(ValueError):
+    """Raised when an uploaded archive exceeds limits or contains unsafe members (QW3)."""
+
+
+_ARCHIVE_EXTS = (".zip", ".tar", ".gz", ".tgz", ".7z", ".rar")
 
 
 class IngestionAdapter:
@@ -250,8 +258,7 @@ class IngestionAdapter:
         extracted_dir.mkdir(parents=True, exist_ok=True)
 
         child_packages = []
-        with zipfile.ZipFile(input_path, "r") as zf:
-            zf.extractall(extracted_dir)
+        self._safe_extract_zip(input_path, extracted_dir)
 
         for root, _, files in os.walk(extracted_dir):
             for f in files:
@@ -310,6 +317,55 @@ class IngestionAdapter:
             "extracted_text": "",
             "metadata": {"source": "text"},
         }
+
+    def _safe_extract_zip(self, zip_path: Path, dest: Path) -> None:
+        """Extract with hard limits instead of zipfile.extractall (QW3).
+
+        Why: extractall has no size/member limits (zip bombs) and the old code
+        recursed into nested archives without bound. Limits come from config;
+        sizes are enforced while streaming, so a member that lies about its
+        declared size in the header is still stopped.
+        """
+        max_members = settings.ZIP_MAX_MEMBERS
+        budget = settings.ZIP_MAX_UNCOMPRESSED_MB * 1024 * 1024
+        try:
+            zf = zipfile.ZipFile(zip_path, "r")
+        except zipfile.BadZipFile as e:
+            raise UnsafeArchiveError(f"Not a valid ZIP archive: {e}")
+        with zf:
+            members = [m for m in zf.infolist() if not m.is_dir()]
+            if len(members) > max_members:
+                raise UnsafeArchiveError(f"Archive has {len(members)} files; the limit is {max_members}.")
+            declared = sum(m.file_size for m in members)
+            if declared > budget:
+                raise UnsafeArchiveError(
+                    f"Archive expands to {declared // (1024 * 1024)} MB; the limit is {settings.ZIP_MAX_UNCOMPRESSED_MB} MB."
+                )
+            for m in members:
+                if (m.external_attr >> 16) & 0o170000 == 0o120000:
+                    raise UnsafeArchiveError(f"Archive member {m.filename!r} is a symbolic link.")
+                if m.filename.lower().endswith(_ARCHIVE_EXTS):
+                    raise UnsafeArchiveError(f"Nested archives are not allowed ({m.filename!r}).")
+                if m.filename.startswith(("/", "\\")) or ".." in Path(m.filename).parts:
+                    raise UnsafeArchiveError(f"Archive member {m.filename!r} has an unsafe path.")
+            written = 0
+            for m in members:
+                try:
+                    target = safe_join(dest, m.filename)
+                except UnsafePathError as e:
+                    raise UnsafeArchiveError(f"Archive member {m.filename!r}: {e}")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with zf.open(m) as src, open(target, "wb") as out:
+                    while True:
+                        chunk = src.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        written += len(chunk)
+                        if written > budget:
+                            raise UnsafeArchiveError(
+                                f"Archive expands beyond the {settings.ZIP_MAX_UNCOMPRESSED_MB} MB limit."
+                            )
+                        out.write(chunk)
 
     # ── Conversion Helpers ─────────────────────────────────────────
 

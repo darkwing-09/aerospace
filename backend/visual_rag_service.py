@@ -214,14 +214,18 @@ class VisualRAGService:
         if not pages:
             return []
 
-        # Perform ColPali late-interaction search via Qdrant
+        # Real ColPali (ColQwen2) late-interaction search only when the model is loaded.
+        # Without it, the hash-based stand-in vectors rank pages almost randomly,
+        # so we use BM25 lexical scoring instead.
+        colpali_results = []
         try:
             from colpali_retrieval_service import colpali_retrieval_service
-            colpali_results = colpali_retrieval_service.search_visual_pages(
-                doc_id=doc_id,
-                query=query,
-                top_k=max_pages,
-            )
+            if colpali_retrieval_service.load_model():
+                colpali_results = colpali_retrieval_service.search_visual_pages(
+                    doc_id=doc_id,
+                    query=query,
+                    top_k=max_pages,
+                )
         except Exception as e:
             print(f"[VisualRAG] ColPali query error: {e}")
             colpali_results = []
@@ -234,25 +238,7 @@ class VisualRAGService:
                 r["image_available"] = img_path is not None and img_path.exists()
             return colpali_results
 
-        # Fallback scoring if Qdrant is initializing
-        query_terms = [q.lower() for q in query.split() if len(q) > 2]
-        scored_pages = []
-        for p in pages:
-            text_lower = p["text"].lower()
-            score = 0
-            for term in query_terms:
-                if term in text_lower:
-                    score += 2
-                for h in p["headings"]:
-                    if term in h.lower():
-                        score += 4
-            if p["is_diagram"] or p["is_schematic"]:
-                score += 5
-            if score > 0:
-                scored_pages.append((score, p))
-
-        scored_pages.sort(key=lambda x: x[0], reverse=True)
-        top_candidates = scored_pages[:max_pages]
+        top_candidates = self._bm25_rank(pages, query, max_pages)
 
         results = []
         for score, p in top_candidates:
@@ -281,6 +267,63 @@ class VisualRAGService:
             })
 
         return results
+
+    _STOPWORDS = {
+        "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "at", "by", "is",
+        "are", "was", "be", "it", "this", "that", "what", "which", "how", "do", "does",
+        "should", "i", "my", "me", "with", "from", "as", "if", "can", "when", "where",
+        "too", "about", "explain", "tell", "give", "please", "s", "happens",
+    }
+
+    @classmethod
+    def _tokenize(cls, text: str) -> List[str]:
+        import re
+        toks = re.findall(r"[a-z0-9]+", text.lower())
+        out = []
+        for t in toks:
+            if t in cls._STOPWORDS or len(t) < 2:
+                continue
+            # light stemming so rotate/rotation, landing/land match
+            for suf in ("ation", "ing", "es", "ed", "s"):
+                if len(t) > len(suf) + 3 and t.endswith(suf):
+                    t = t[: -len(suf)]
+                    break
+            out.append(t)
+        return out
+
+    def _bm25_rank(self, pages: List[Dict[str, Any]], query: str, k: int):
+        """BM25 over page text, with page headings weighted 3x."""
+        import math
+        from collections import Counter
+
+        q_terms = list(dict.fromkeys(self._tokenize(query)))
+        if not q_terms:
+            return []
+
+        docs = []
+        for p in pages:
+            heading_text = " ".join(p.get("headings", []))
+            toks = self._tokenize(p.get("text", "")) + self._tokenize(heading_text) * 3
+            docs.append(Counter(toks))
+        n = len(docs)
+        avgdl = (sum(sum(d.values()) for d in docs) / n) or 1.0
+        df = {t: sum(1 for d in docs if t in d) for t in q_terms}
+
+        k1, b = 1.5, 0.75
+        scored = []
+        for p, d in zip(pages, docs):
+            dl = sum(d.values()) or 1
+            score = 0.0
+            for t in q_terms:
+                tf = d.get(t, 0)
+                if not tf:
+                    continue
+                idf = math.log(1 + (n - df[t] + 0.5) / (df[t] + 0.5))
+                score += idf * tf * (k1 + 1) / (tf + k1 * (1 - b + b * dl / avgdl))
+            if score > 0:
+                scored.append((round(score, 2), p))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[:k]
 
     def get_page_image_base64(self, doc_id: str, page_num: int, max_dim: int = 800) -> Optional[str]:
         """Returns page image encoded as optimized base64 string for VLM inference."""

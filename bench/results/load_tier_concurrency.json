@@ -1,0 +1,97 @@
+{
+  "timestamp": "2026-11-04T04:43:26Z",
+  "hardware_tier": "cpu_lite",
+  "hardware_info": {
+    "tier": "cpu_lite",
+    "size_class": null,
+    "label": "Lite mode \u00b7 CPU",
+    "reason": "no supported GPU accelerator",
+    "warning": null,
+    "device": {
+      "os": "Linux",
+      "arch": "x86_64",
+      "accelerator": "none",
+      "gpu_names": [],
+      "gpu_count": 0,
+      "vram_gb": 0.0,
+      "total_vram_gb": 0.0,
+      "unified_mem_gb": 0.0,
+      "ram_gb": 31.1,
+      "cpu_cores": 8,
+      "cpu_name": "11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz",
+      "detected_at": "2026-11-04T04:43:15+00:00"
+    },
+    "agents_enabled": [
+      "main",
+      "retrieval",
+      "data_analysis",
+      "multimodal_ocr",
+      "critic",
+      "memory"
+    ],
+    "agents_disabled": [
+      "coding",
+      "correlation",
+      "optimization",
+      "colpali",
+      "video"
+    ],
+    "max_parallel_llm_calls": 1,
+    "max_plan_depth": 3,
+    "safety": {
+      "critic_deterministic": true,
+      "permissions": true,
+      "audit": true,
+      "egress_guard": true
+    },
+    "embedding_model": "nomic-embed-text",
+    "agent_models": {
+      "orchestrator": "qwen3:4b-instruct-2507-q4_K_M",
+      "math": "qwen3:4b-instruct-2507-q4_K_M",
+      "vision_table": "qwen3-vl:2b",
+      "reasoning": "qwen3:4b-instruct-2507-q4_K_M",
+      "verification": "qwen2.5:3b",
+      "synthesis": "qwen3:4b-instruct-2507-q4_K_M"
+    },
+    "pinned_by_env": {}
+  },
+  "hardware_note": "dev hardware (i7-1185G7, CPU only), not representative",
+  "concurrency_benchmarks": [
+    {
+      "concurrency": 4,
+      "total_requests": 8,
+      "wall_time_seconds": 2.19,
+      "throughput_rps": 3.64,
+      "errors": 0,
+      "p50_ms": 1028.57,
+      "p95_ms": 1287.39,
+      "p99_ms": 1335.3,
+      "min_ms": 841.08,
+      "max_ms": 1347.27
+    },
+    {
+      "concurrency": 8,
+      "total_requests": 16,
+      "wall_time_seconds": 2.94,
+      "throughput_rps": 5.44,
+      "errors": 0,
+      "p50_ms": 1271.46,
+      "p95_ms": 1545.57,
+      "p99_ms": 1729.87,
+      "min_ms": 963.99,
+      "max_ms": 1775.95
+    },
+    {
+      "concurrency": 16,
+      "total_requests": 32,
+      "wall_time_seconds": 5.08,
+      "throughput_rps": 6.3,
+      "errors": 0,
+      "p50_ms": 2041.92,
+      "p95_ms": 2856.97,
+      "p99_ms": 2956.17,
+      "min_ms": 486.96,
+      "max_ms": 2982.82
+    }
+  ]
+}

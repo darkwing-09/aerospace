@@ -1,0 +1,157 @@
+{
+  "version": "1.0.0",
+  "fixtures": {
+    "maintenance_sop.pdf": {
+      "path": "backend/tests/fixtures/maintenance_sop.pdf",
+      "sha256": "a12581450e99c4b10778b538434c5a21186941eec2ea6a27939d38879bd1271f",
+      "modality": "pdf",
+      "description": "Synthetic maintenance SOP for hydraulic system servicing (SOP-HYD-04)"
+    },
+    "scanned_page.png": {
+      "path": "backend/tests/fixtures/scanned_page.png",
+      "sha256": "761c3f91935392291a0a645420cebbebb3ea737ada8a0711a8a62ce3b61899b7",
+      "modality": "image_ocr",
+      "description": "Synthetic scanned preflight checklist with known text for OCR testing"
+    },
+    "messy_avionics_data.xlsx": {
+      "path": "backend/tests/fixtures/messy_avionics_data.xlsx",
+      "sha256": "67f5f4debf756b480362d4d4abdd6c5a28344aea34cd122762e32eeac5eb1e2b",
+      "modality": "spreadsheet",
+      "description": "Synthetic flight log with merged cells, units in values, and empty rows"
+    },
+    "avionics_diagram.png": {
+      "path": "backend/tests/fixtures/avionics_diagram.png",
+      "sha256": "ecd87196880f818c874e9f8e417d4f6e4f8c2088c20fe615216ae67aff360d28",
+      "modality": "diagram",
+      "description": "Synthetic hydraulic circuit schematic for multimodal visual inspection"
+    },
+    "audio_note.wav": {
+      "path": "backend/tests/fixtures/audio_note.wav",
+      "sha256": "05d844b55e33f4cb744b09f1be79c73e25fb5c0611a934bb92d948ef6ce9beaa",
+      "modality": "audio",
+      "description": "Synthetic 16kHz audio tone note for offline ASR testing"
+    }
+  },
+  "ground_truth_qa": [
+    {
+      "id": 1,
+      "question": "What is the normal operating pressure of the hydraulic system?",
+      "answer": "210 kg/cm2",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 2,
+      "question": "What is the minimum preflight pressure for the hydraulic system?",
+      "answer": "180 kg/cm2",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 3,
+      "question": "At what pressure must the main hydraulic circuit relief valve actuate?",
+      "answer": "215 +/- 5 kg/cm2",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 4,
+      "question": "At what pressure does the booster circuit relief valve actuate?",
+      "answer": "210 +/- 5 kg/cm2",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 5,
+      "question": "What is the nitrogen precharge pressure of the emergency system?",
+      "answer": "40 kg/cm2 at 20 degrees Celsius",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 6,
+      "question": "What fluid type is specified for the hydraulic system?",
+      "answer": "AMG-10 (GOST 6794-75)",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 7,
+      "question": "What is the total fluid capacity of the hydraulic system?",
+      "answer": "28 liters",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 8,
+      "question": "What must be installed before pressurizing the hydraulic system?",
+      "answer": "Ground safety pins",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 9,
+      "question": "What is the SOP reference code for hydraulic maintenance?",
+      "answer": "SOP-HYD-04",
+      "source": "maintenance_sop.pdf"
+    },
+    {
+      "id": 10,
+      "question": "What accumulator precharge pressure is listed on the scanned checklist?",
+      "answer": "40 kg/cm2",
+      "source": "scanned_page.png"
+    },
+    {
+      "id": 11,
+      "question": "What is the minimum nitrogen bottle pressure on the scanned checklist?",
+      "answer": "150 kg/cm2",
+      "source": "scanned_page.png"
+    },
+    {
+      "id": 12,
+      "question": "What status is shown for landing gear emergency extension on the scanned sheet?",
+      "answer": "VERIFIED OK",
+      "source": "scanned_page.png"
+    },
+    {
+      "id": 13,
+      "question": "How much fuel was burned during taxi in Leg 1?",
+      "answer": "120 kg",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 14,
+      "question": "What was the altitude for Leg 2 climb?",
+      "answer": "5000 m",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 15,
+      "question": "What was the climb rate during Leg 2?",
+      "answer": "25 m/s",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 16,
+      "question": "What was the cruise speed during Leg 3?",
+      "answer": "Mach 0.85",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 17,
+      "question": "How much fuel was burned during Leg 3 cruise?",
+      "answer": "800 kg",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 18,
+      "question": "What was the touchdown speed during Leg 5 landing?",
+      "answer": "280 km/h",
+      "source": "messy_avionics_data.xlsx"
+    },
+    {
+      "id": 19,
+      "question": "Which component connects to the booster actuator in the schematic?",
+      "answer": "Main Hydraulic Pump",
+      "source": "avionics_diagram.png"
+    },
+    {
+      "id": 20,
+      "question": "What sample rate is used for the audio test fixture?",
+      "answer": "16000 Hz",
+      "source": "audio_note.wav"
+    }
+  ]
+}

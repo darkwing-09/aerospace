@@ -25,7 +25,9 @@ export default function useChat(aircraftId, onPageRef) {
   }, [])
 
   const sendMessage = async (content) => {
-    if (!content.trim() || !aircraftId) return
+    if (!content.trim()) return
+
+    const targetAircraftId = aircraftId || 'default'
 
     if (abortRef.current) {
       abortRef.current.abort()
@@ -71,7 +73,7 @@ export default function useChat(aircraftId, onPageRef) {
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          aircraft_id: aircraftId,
+          aircraft_id: targetAircraftId,
           messages: updatedMessages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -294,7 +296,19 @@ export default function useChat(aircraftId, onPageRef) {
       setIsStreaming(false)
       setAgentStatus(null)
     } finally {
+      setIsStreaming(false)
       abortRef.current = null
+      setMessages((prev) => {
+        if (prev.length > 0 && prev[prev.length - 1].isStreaming) {
+          const next = [...prev]
+          next[next.length - 1] = {
+            ...next[next.length - 1],
+            isStreaming: false,
+          }
+          return next
+        }
+        return prev
+      })
     }
   }
 

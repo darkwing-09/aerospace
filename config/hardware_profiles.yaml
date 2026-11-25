@@ -1,0 +1,126 @@
+# Hardware tiers (ADR-0007, Proposed). Selected once at backend startup by
+# backend/router/hardware_probe.py. Force a tier with AEROMIND_HW_TIER.
+#
+# Rules:
+#  - Tiers change CAPACITY only (models, enabled agents, parallelism, plan depth).
+#    Safety components are on in every tier (tested).
+#  - The embedding model is defined once, for all tiers: an index built on one
+#    device must stay queryable on another (changing it = full re-ingestion).
+#  - Model tags outside cpu_lite are CANDIDATES (not verified on this dev host,
+#    which has no GPU and is not a Mac). Missing models fail loudly (QW1) and are
+#    listed under /api/health -> models.missing; they are never silently swapped.
+#  - Role names match today's AGENT_MODEL_MAP (backend/config.py); they become
+#    capability tags in config/models.yaml at task 0.4.
+
+version: 1
+
+embedding_model: nomic-embed-text   # installed now; bge-m3 pending §12.7 / ADR-0004
+
+thresholds:
+  gpu_standard_min_vram_gb: 8
+  gpu_high_min_vram_gb: 23          # 24 GB cards report ~23.99 GiB
+  gpu_multi_min_gpus: 2
+  apple_memory_classes:             # unified memory (GB) -> model size class; first match wins
+    - {min_gb: 48, size_class: "32b"}
+    - {min_gb: 24, size_class: "14b"}
+    - {min_gb: 0,  size_class: "8b", warning: "Apple Silicon with under 24 GB unified memory: running full roster with 8B-class models."}
+
+safety_all_tiers: &safety
+  critic_deterministic: true
+  permissions: true
+  audit: true
+  egress_guard: true
+
+tiers:
+  cpu_lite:
+    label: "Lite mode · CPU"
+    agents_enabled: [main, retrieval, data_analysis, multimodal_ocr, critic, memory]
+    agents_disabled: [coding, correlation, optimization, colpali, video]
+    max_parallel_llm_calls: 1
+    max_plan_depth: 3
+    safety: *safety
+    agent_models:                   # all installed on the dev i7 (verified 2026-11-03)
+      orchestrator: qwen3:4b-instruct-2507-q4_K_M
+      synthesis: qwen3:4b-instruct-2507-q4_K_M
+      reasoning: qwen3:4b-instruct-2507-q4_K_M
+      math: qwen3:4b-instruct-2507-q4_K_M
+      vision_table: qwen3-vl:2b
+      verification: qwen2.5:3b       # different family/generation from the producer
+
+  gpu_standard:
+    label: "GPU mode · 8–16 GB"
+    agents_enabled: [main, execution, coding, retrieval, data_analysis, multimodal, critic, memory]
+    agents_disabled: [correlation, optimization, colpali]
+    max_parallel_llm_calls: 2
+    max_plan_depth: 5
+    safety: *safety
+    agent_models:
+      orchestrator: qwen3:8b
+      synthesis: qwen3:8b
+      reasoning: qwen3:8b
+      math: qwen3:8b
+      vision_table: qwen3-vl:4b
+      verification: gemma3:12b
+
+  gpu_high:
+    label: "GPU mode · 24 GB"
+    agents_enabled: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali]
+    agents_disabled: [optimization]
+    max_parallel_llm_calls: 3
+    max_plan_depth: 6
+    safety: *safety
+    agent_models:
+      orchestrator: qwen3:8b
+      synthesis: qwen3:14b
+      reasoning: qwen3:14b
+      math: qwen3:8b
+      vision_table: qwen3-vl:8b
+      verification: gemma3:12b
+
+  gpu_multi:
+    label: "GPU mode · multi-GPU"
+    agents_enabled: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali, optimization]
+    agents_disabled: []
+    max_parallel_llm_calls: 6
+    max_plan_depth: 6
+    safety: *safety
+    agent_models:
+      orchestrator: qwen3:32b
+      synthesis: qwen3:32b
+      reasoning: qwen3:32b
+      math: qwen3:32b
+      vision_table: qwen2.5vl:32b
+      verification: gemma3:27b
+
+  apple_full:
+    label: "Full quality · Apple Silicon"
+    agents_enabled: [main, execution, coding, retrieval, data_analysis, multimodal, critic, correlation, memory, colpali, optimization]
+    agents_disabled: []
+    max_parallel_llm_calls: 3
+    max_plan_depth: 6
+    safety: *safety
+    size_classes:                   # chosen by unified memory (thresholds.apple_memory_classes)
+      "32b":
+        agent_models:
+          orchestrator: qwen3:32b
+          synthesis: qwen3:32b
+          reasoning: qwen3:32b
+          math: qwen3:14b
+          vision_table: qwen3-vl:8b
+          verification: gemma3:27b
+      "14b":
+        agent_models:
+          orchestrator: qwen3:14b
+          synthesis: qwen3:14b
+          reasoning: qwen3:14b
+          math: qwen3:8b
+          vision_table: qwen3-vl:8b
+          verification: gemma3:12b
+      "8b":
+        agent_models:
+          orchestrator: qwen3:8b
+          synthesis: qwen3:8b
+          reasoning: qwen3:8b
+          math: qwen3:8b
+          vision_table: qwen3-vl:4b
+          verification: gemma3:4b

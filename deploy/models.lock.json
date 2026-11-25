@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "generated_at": "2026-11-04T08:00:00Z",
+  "models": [
+    {
+      "name": "qwen3-4b-instruct-2507-q4",
+      "tag": "qwen3:4b-instruct-2507-q4_K_M",
+      "digest": "sha256:0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+      "size": 2497293803,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    },
+    {
+      "name": "qwen2.5-coder-1.5b",
+      "tag": "qwen2.5-coder:1.5b",
+      "digest": "sha256:d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "size": 986062089,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    },
+    {
+      "name": "qwen3-vl-2b",
+      "tag": "qwen3-vl:2b",
+      "digest": "sha256:0635d9d857d497aeadba3d7d27485746c50554446f9f6ec01ef39788221adbe8",
+      "size": 1889519687,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    },
+    {
+      "name": "qwen2.5-3b-verifier",
+      "tag": "qwen2.5:3b",
+      "digest": "sha256:357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "size": 1929912432,
+      "tier": "cpu_lite",
+      "licence": "qwen-research"
+    },
+    {
+      "name": "nomic-embed-text",
+      "tag": "nomic-embed-text:latest",
+      "digest": "sha256:0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+      "size": 274302450,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    },
+    {
+      "name": "qwen3-4b",
+      "tag": "qwen3:4b",
+      "digest": "sha256:359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+      "size": 2497293931,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    },
+    {
+      "name": "gemma4-e4b",
+      "tag": "gemma4:e4b",
+      "digest": "sha256:c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2beaae69f5d569cf982eb",
+      "size": 9608350718,
+      "tier": "cpu_lite",
+      "licence": "gemma-terms"
+    },
+    {
+      "name": "mistral-7b-finetuned",
+      "tag": "backend/models",
+      "digest": "sha256:7ea6e0ab35decc2f37f03dedff027856d3565f3c292ac77426099c682cd0c2ea",
+      "size": 14496080928,
+      "tier": "cpu_lite",
+      "licence": "apache-2.0"
+    }
+  ]
+}

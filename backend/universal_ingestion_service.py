@@ -22,6 +22,7 @@ import pandas as pd
 
 from config import settings
 from visual_rag_service import visual_rag_service
+from security.paths import safe_filename, safe_identifier, safe_join
 
 
 class UniversalIngestionService:
@@ -92,14 +93,17 @@ class UniversalIngestionService:
         Ingests any file into the defense data repository, automatically
         parsing its content and indexing it for multi-agent RAG.
         """
+        # Client-supplied names are validated against an allowlist and the
+        # resolved destination must stay inside its root (QW3, pitfall §11.16).
+        filename = safe_filename(filename)
         ext = Path(filename).suffix.lower()
-        doc_id = Path(filename).stem.lower().replace(" ", "_").replace("-", "_")
+        doc_id = safe_identifier(Path(filename).stem.lower().replace(" ", "_").replace("-", "_"), "document id")
 
         # Determine target directory
         if ext == ".pdf":
-            dest = self.pdf_dir / filename
+            dest = safe_join(self.pdf_dir, filename)
         else:
-            dest = self.uploads_dir / filename
+            dest = safe_join(self.uploads_dir, filename)
 
         content = await file_obj.read() if hasattr(file_obj, "read") else file_obj
         with open(dest, "wb") as f:

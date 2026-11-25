@@ -76,7 +76,7 @@ class ModelService:
         """Ollama requires no local loading, just a health check."""
         import httpx
         try:
-            res = httpx.get("http://127.0.0.1:11434/api/tags")
+            res = httpx.get(f"{settings.OLLAMA_HOST}/api/tags", timeout=5.0)
             if res.status_code == 200:
                 self.model_type = "ollama"
                 print(f"[AeroMind] Connected to Ollama using model: {settings.OLLAMA_MODEL}")
@@ -186,7 +186,8 @@ class ModelService:
                 "1. Deliver actionable instructions with exact switch names, panel locations, and gauge indicators.\n"
                 "2. Structure procedures in clear numbered steps.\n"
                 "3. Include prominent [WARNING] or [CAUTION] directives if safety risks or limits are involved.\n"
-                "4. Cite the relevant manual page or schematic diagram."
+                "4. Cite the relevant manual page or schematic diagram.\n"
+                "5. NO-GUESSING RULE: Every number (speed, altitude, angle, RPM, time, quantity) and every procedure step MUST appear in the DOCUMENT CONTEXT below. Copy numbers with their original units. Never convert units or invent values. If the context does not contain the requested information, say exactly that and name the pages you checked instead of guessing."
             )
             doc_header = f"Aircraft: {raw_name.upper()}"
         else:
@@ -199,7 +200,8 @@ class ModelService:
                 "3. If the query asks for a syllabus, list of topics, steps, or definitions, provide the complete relevant outline from the document.\n"
                 "4. Cite the document page numbers where the information is found.\n"
                 "5. Only use [WARNING] or [CAUTION] if the document explicitly contains hazards or safety rules.\n"
-                "6. Ground all statements in the provided context without making false assumptions."
+                "6. Ground all statements in the provided context without making false assumptions.\n"
+                "7. NO-GUESSING RULE: Every number (speed, altitude, angle, RPM, time, quantity) and every procedure step MUST appear in the DOCUMENT CONTEXT below. Copy numbers with their original units. Never convert units or invent values. If the context does not contain the requested information, say exactly that and name the pages you checked instead of guessing."
             )
             doc_header = f"Active Document: {raw_name}"
 
@@ -216,6 +218,39 @@ class ModelService:
             f"User Query: {query}\n\n"
             f"### Response:\n"
         )
+
+    # ─────────────────────────────────────────────────────────────
+    # MODEL AVAILABILITY (QW1)
+    # ─────────────────────────────────────────────────────────────
+    async def check_configured_models(self) -> Dict:
+        """Compare every configured role model with what Ollama actually has.
+
+        Why: a configured-but-missing model used to be swapped silently for the
+        default one, so the UI named a model that never ran. Surfacing the gap
+        in /api/health makes the mismatch visible before a query hits it.
+        """
+        import httpx
+
+        configured = dict(settings.AGENT_MODEL_MAP)
+        result = {"configured": configured, "installed": None, "missing": None, "error": None}
+        if not settings.USE_OLLAMA:
+            result["error"] = "Ollama backend disabled"
+            return result
+        try:
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                res = await client.get(f"{settings.OLLAMA_HOST}/api/tags")
+            res.raise_for_status()
+            installed = sorted(m.get("name", "") for m in res.json().get("models", []))
+        except Exception as e:  # report, don't guess
+            result["error"] = f"Could not list Ollama models: {e}"
+            return result
+        installed_set = set(installed)
+        # Ollama treats "name" and "name:latest" as the same model.
+        def _present(tag: str) -> bool:
+            return tag in installed_set or (":" not in tag and f"{tag}:latest" in installed_set)
+        result["installed"] = installed
+        result["missing"] = sorted({tag for tag in configured.values() if not _present(tag)})
+        return result
 
     # ─────────────────────────────────────────────────────────────
     # STATUS
@@ -253,16 +288,24 @@ class ModelService:
                 yield "❌ Model not loaded. Check backend logs."
             return
 
-        # Resolve model via capability registry or explicit model_name
+        # Resolve model via explicit map override, ModelRouter (ADR-0005), or model_name
         if capability:
-            resolved_model = settings.AGENT_MODEL_MAP.get(
-                capability,
-                settings.AGENT_MODEL_MAP.get("synthesis", settings.OLLAMA_MODEL),
-            )
+            if capability in settings.AGENT_MODEL_MAP:
+                resolved_model = settings.AGENT_MODEL_MAP[capability]
+            else:
+                try:
+                    from router.router import router
+                    resolved_model = router.get_model_tag(capability)
+                except Exception:
+                    resolved_model = settings.AGENT_MODEL_MAP.get("synthesis", settings.OLLAMA_MODEL)
         elif model_name:
             resolved_model = model_name
         else:
-            resolved_model = settings.AGENT_MODEL_MAP.get("synthesis", settings.OLLAMA_MODEL)
+            try:
+                from router.router import router
+                resolved_model = router.get_model_tag("drafting")
+            except Exception:
+                resolved_model = settings.AGENT_MODEL_MAP.get("synthesis", settings.OLLAMA_MODEL)
 
         prompt = self._build_prompt(aircraft, messages, context)
         print(f"[AeroMind Debug] Model: {resolved_model} (Capability: {capability}), Prompt length: {len(prompt)} chars, Images attached: {len(images) if images else 0}")
@@ -369,8 +412,10 @@ class ModelService:
                     "top_p": settings.TOP_P,
                     "stop": settings.STOP_TOKENS,
                     "num_predict": settings.MAX_NEW_TOKENS,
-                    "num_thread": 8,
-                    "num_ctx": 2048,
+                    "num_thread": os.cpu_count() or 8,
+                    # Was hard-coded to 2048, silently truncating prompts built
+                    # for N_CTX (8192 in .env). Use the configured value.
+                    "num_ctx": settings.N_CTX,
                 },
             }
             if is_multimodal:
@@ -378,22 +423,24 @@ class ModelService:
             
             try:
                 async with httpx.AsyncClient(timeout=timeout) as client:
-                    resp = await client.post(
-                        f"{settings.OLLAMA_HOST}/api/generate",
-                        json=generate_payload,
-                    )
-                    # If model not found (404), fall back to default model
-                    if resp.status_code == 404 and selected_model != settings.OLLAMA_MODEL:
-                        print(f"[AeroMind Debug] Model '{selected_model}' not found in Ollama. Falling back to '{settings.OLLAMA_MODEL}'...")
-                        generate_payload["model"] = settings.OLLAMA_MODEL
-                        if "images" in generate_payload and not any(v in settings.OLLAMA_MODEL.lower() for v in ["gemma4", "vision", "vl"]):
-                            del generate_payload["images"]
-
+                    # One streamed request per call. (Previously a non-streamed
+                    # POST ran a full generation first just to probe for 404,
+                    # doubling latency on every call — QW2.)
                     async with client.stream(
-                        "POST", 
+                        "POST",
                         f"{settings.OLLAMA_HOST}/api/generate",
                         json=generate_payload,
                     ) as response:
+                        if response.status_code == 404:
+                            # Fail closed (QW1, plan pitfall §11.5): never answer
+                            # with a different model than the one requested.
+                            await response.aread()
+                            print(f"[AeroMind] Model '{selected_model}' is not installed in Ollama; refusing to substitute another model.")
+                            await queue.put(
+                                f"\n[Generation error: model '{selected_model}' is not installed in Ollama (HTTP 404). "
+                                f"No fallback model was used. Install it with `ollama pull {selected_model}` or change the configured model.]"
+                            )
+                            return
                         if response.status_code != 200:
                             error_text = await response.aread()
                             print(f"[AeroMind Debug] Ollama error {response.status_code}: {error_text.decode()}")

@@ -1,0 +1,51 @@
+version: "3.8"
+
+networks:
+  # Internal zero-egress network with no gateway to the internet
+  internal_net:
+    internal: true
+    driver: bridge
+
+  # Ingress network for external user/client communication to the API
+  ingress_net:
+    internal: false
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    env_file:
+      - zero_egress.env
+    ports:
+      - "8000:8000"
+    networks:
+      - ingress_net
+      - internal_net
+    volumes:
+      - ../backend/data_repository:/app/backend/data_repository
+    depends_on:
+      - ollama
+      - qdrant
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    networks:
+      - internal_net
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    networks:
+      - internal_net
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
+  qdrant_data:

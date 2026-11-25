@@ -28,119 +28,7 @@ from evaluation_service import evaluation_service
 from langsmith_service import langsmith_service
 
 
-class AvionicsMathEngine:
-    """
-    Deterministic math and physics engine to prevent SLM calculation hallucinations.
-    Handles Mach, fuel flow, descent rates, altitude atmospheric models, and unit conversions.
-    """
-
-    @staticmethod
-    def calculate(query: str) -> Optional[Dict[str, Any]]:
-        query_lower = query.lower()
-        has_math = any(
-            w in query_lower
-            for w in [
-                "calculate",
-                "fuel",
-                "burn",
-                "mach",
-                "speed",
-                "consumption",
-                "distance",
-                "range",
-                "convert",
-                "endurance",
-                "kg",
-                "lbs",
-                "altitude",
-                "descent",
-                "time",
-                "tas",
-            ]
-        )
-
-        if not has_math:
-            return None
-
-        numbers = [float(n) for n in re.findall(r"\b\d+(?:\.\d+)?\b", query)]
-        results = {}
-
-        # 1. Mach to True Airspeed calculation
-        mach_match = re.search(r"mach\s*(\d+(?:\.\d+)?)", query_lower)
-        if mach_match:
-            m_val = float(mach_match.group(1))
-            alt_m = 10000.0
-            alt_match = re.search(r"(\d+)\s*(?:m|meters|meter)", query_lower)
-            if alt_match:
-                alt_m = float(alt_match.group(1))
-
-            temp_k = max(216.65, 288.15 - (0.0065 * alt_m))
-            speed_of_sound_kmh = 3.6 * math.sqrt(1.4 * 287.05 * temp_k)
-            tas_kmh = round(m_val * speed_of_sound_kmh, 1)
-            tas_knots = round(tas_kmh / 1.852, 1)
-
-            results["mach_speed"] = {
-                "mach": m_val,
-                "altitude_m": alt_m,
-                "tas_kmh": tas_kmh,
-                "tas_knots": tas_knots,
-                "formula": f"TAS = Mach ({m_val}) × a({alt_m}m) = {tas_kmh} km/h ({tas_knots} knots)",
-            }
-
-        # 2. Fuel Burn / Endurance Calculation
-        if "fuel" in query_lower and ("burn" in query_lower or "endurance" in query_lower or "consumption" in query_lower):
-            fuel_kg = 2800.0
-            fuel_match = re.search(r"(\d+)\s*(?:kg|kilos|liters)", query_lower)
-            if fuel_match:
-                fuel_kg = float(fuel_match.group(1))
-
-            is_afterburner = "afterburner" in query_lower or "reheat" in query_lower or "emergency power" in query_lower
-            burn_rate_kg_min = 280.0 if is_afterburner else 58.0
-            endurance_minutes = round(fuel_kg / burn_rate_kg_min, 1)
-
-            results["fuel_endurance"] = {
-                "fuel_quantity_kg": fuel_kg,
-                "mode": "AFTERBURNER (ZONE 2)" if is_afterburner else "MAX CONTINUOUS CRUISE",
-                "consumption_rate_kg_min": burn_rate_kg_min,
-                "flight_endurance_min": endurance_minutes,
-                "formula": f"Endurance = {fuel_kg} kg / {burn_rate_kg_min} kg/min = {endurance_minutes} minutes",
-            }
-
-        # 3. Unit Conversions
-        if "convert" in query_lower or "to lbs" in query_lower or "to kg" in query_lower or "to feet" in query_lower:
-            conversions = []
-            for num in numbers[:2]:
-                if "kg" in query_lower or "lbs" in query_lower:
-                    lbs = round(num * 2.20462, 1)
-                    kg = round(num / 2.20462, 1)
-                    conversions.append(f"{num} kg = {lbs} lbs | {num} lbs = {kg} kg")
-                if "meter" in query_lower or "feet" in query_lower or "ft" in query_lower:
-                    ft = round(num * 3.28084, 1)
-                    m = round(num / 3.28084, 1)
-                    conversions.append(f"{num} m = {ft} ft | {num} ft = {m} m")
-                if "km/h" in query_lower or "knot" in query_lower:
-                    kn = round(num / 1.852, 1)
-                    kmh = round(num * 1.852, 1)
-                    conversions.append(f"{num} km/h = {kn} knots | {num} knots = {kmh} km/h")
-            if conversions:
-                results["conversions"] = conversions
-
-        if not results:
-            return None
-
-        summary_lines = []
-        for k, v in results.items():
-            if isinstance(v, dict) and "formula" in v:
-                summary_lines.append(f"• {v['formula']}")
-            elif isinstance(v, dict) and "conversions" in v:
-                summary_lines.extend([f"• {c}" for c in v["conversions"]])
-            elif isinstance(v, list):
-                summary_lines.extend([f"• {item}" for item in v])
-
-        return {
-            "metrics": results,
-            "summary_text": "\n".join(summary_lines),
-        }
+from tools.aero_math import AvionicsMathEngine
 
 
 class MultiAgentOrchestrator:
@@ -406,12 +294,8 @@ class MultiAgentOrchestrator:
         # ── STAGE 4: Post-Synthesis Verification & Safety Audit ──
         is_fighter = any(f in aircraft_id.lower() for f in ["mig21", "su27", "f16", "f18", "fighter", "interceptor"])
         val_title = "Flight Safety & SOP Protocol Validator" if is_fighter else "Document Consistency & Citation Auditor"
-        val_action = "Validating generated briefing against aviation safety rules" if is_fighter else "Auditing response against document citations"
-        val_thought = (
-            "Cross-verifying procedure against military safety protocols. Enforcing high-visibility [WARNING] and [CAUTION] mandates."
-            if is_fighter
-            else "Audited response against extracted document text and citations. Verified grounding against source material."
-        )
+        val_action = "Safety & citation audit (unverified heuristic until Phase 1.10 Critic)"
+        val_thought = "Automated Critic validation not yet implemented (Phase 1.10). Output marked unverified."
 
         verification_model = settings.AGENT_MODEL_MAP.get("verification", "qwen2.5:3b")
         yield f'data: [AGENT_STATUS:{{"agent":"safety_validator","title":"{val_title}","action":"{val_action}","stage":"validation","node_id":"safety_verification","model":"{verification_model}"}}]\n\n'
@@ -422,7 +306,7 @@ class MultiAgentOrchestrator:
             "title": val_title,
             "thought": val_thought,
             "task": "Compliance & Citation Audit",
-            "status": "completed",
+            "status": "not_implemented",
         }
         yield f"data: [AGENT_THOUGHT:{json.dumps(safety_thought)}]\n\n"
 

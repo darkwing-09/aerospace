@@ -1,0 +1,286 @@
+{
+  "tier": "gpu_high",
+  "timestamp": "2026-11-04T02:36:43Z",
+  "capabilities": [
+    "classification",
+    "code_gen",
+    "code_review",
+    "debugging",
+    "drafting",
+    "embedding",
+    "evaluation",
+    "extraction",
+    "general_reasoning",
+    "math",
+    "ocr_assist",
+    "planning",
+    "summarization",
+    "vision"
+  ],
+  "task_summary": {
+    "retrieval": {
+      "total_tasks": 10,
+      "passed_tasks": 10,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 280.0,
+      "latency_p95_ms": 460.0,
+      "ttft_p50_ms": 80.0,
+      "ttft_p95_ms": 80.0,
+      "results": [
+        {
+          "id": 1,
+          "task_type": "retrieval",
+          "question": "What is the normal operating pressure of the hydraulic system?",
+          "expected": "210 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 250.0
+        },
+        {
+          "id": 2,
+          "task_type": "retrieval",
+          "question": "What is the minimum preflight pressure for the hydraulic system?",
+          "expected": "180 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 250.0
+        },
+        {
+          "id": 3,
+          "task_type": "retrieval",
+          "question": "At what pressure must the main hydraulic circuit relief valve actuate?",
+          "expected": "215 +/- 5 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 310.0
+        },
+        {
+          "id": 4,
+          "task_type": "retrieval",
+          "question": "At what pressure does the booster circuit relief valve actuate?",
+          "expected": "210 +/- 5 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 310.0
+        },
+        {
+          "id": 5,
+          "task_type": "retrieval",
+          "question": "What is the nitrogen precharge pressure of the emergency system?",
+          "expected": "40 kg/cm2 at 20 degrees Celsius",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 460.0
+        },
+        {
+          "id": 6,
+          "task_type": "retrieval",
+          "question": "What fluid type is specified for the hydraulic system?",
+          "expected": "AMG-10 (GOST 6794-75)",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 360.0
+        },
+        {
+          "id": 7,
+          "task_type": "retrieval",
+          "question": "What is the total fluid capacity of the hydraulic system?",
+          "expected": "28 liters",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 240.0
+        },
+        {
+          "id": 8,
+          "task_type": "retrieval",
+          "question": "What must be installed before pressurizing the hydraulic system?",
+          "expected": "Ground safety pins",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 330.0
+        },
+        {
+          "id": 9,
+          "task_type": "retrieval",
+          "question": "What is the SOP reference code for hydraulic maintenance?",
+          "expected": "SOP-HYD-04",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 250.0
+        },
+        {
+          "id": 20,
+          "task_type": "retrieval",
+          "question": "What sample rate is used for the audio test fixture?",
+          "expected": "16000 Hz",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 230.0
+        }
+      ]
+    },
+    "multimodal": {
+      "total_tasks": 4,
+      "passed_tasks": 4,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 255.0,
+      "latency_p95_ms": 340.0,
+      "ttft_p50_ms": 80.0,
+      "ttft_p95_ms": 80.0,
+      "results": [
+        {
+          "id": 10,
+          "task_type": "multimodal",
+          "question": "What accumulator precharge pressure is listed on the scanned checklist?",
+          "expected": "40 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 240.0
+        },
+        {
+          "id": 11,
+          "task_type": "multimodal",
+          "question": "What is the minimum nitrogen bottle pressure on the scanned checklist?",
+          "expected": "150 kg/cm2",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 250.0
+        },
+        {
+          "id": 12,
+          "task_type": "multimodal",
+          "question": "What status is shown for landing gear emergency extension on the scanned sheet?",
+          "expected": "VERIFIED OK",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 260.0
+        },
+        {
+          "id": 19,
+          "task_type": "multimodal",
+          "question": "Which component connects to the booster actuator in the schematic?",
+          "expected": "Main Hydraulic Pump",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 340.0
+        }
+      ]
+    },
+    "data_analysis": {
+      "total_tasks": 6,
+      "passed_tasks": 6,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 210.0,
+      "latency_p95_ms": 240.0,
+      "ttft_p50_ms": 80.0,
+      "ttft_p95_ms": 80.0,
+      "results": [
+        {
+          "id": 13,
+          "task_type": "data_analysis",
+          "question": "How much fuel was burned during taxi in Leg 1?",
+          "expected": "120 kg",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 210.0
+        },
+        {
+          "id": 14,
+          "task_type": "data_analysis",
+          "question": "What was the altitude for Leg 2 climb?",
+          "expected": "5000 m",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 210.0
+        },
+        {
+          "id": 15,
+          "task_type": "data_analysis",
+          "question": "What was the climb rate during Leg 2?",
+          "expected": "25 m/s",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 210.0
+        },
+        {
+          "id": 16,
+          "task_type": "data_analysis",
+          "question": "What was the cruise speed during Leg 3?",
+          "expected": "Mach 0.85",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 240.0
+        },
+        {
+          "id": 17,
+          "task_type": "data_analysis",
+          "question": "How much fuel was burned during Leg 3 cruise?",
+          "expected": "800 kg",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 210.0
+        },
+        {
+          "id": 18,
+          "task_type": "data_analysis",
+          "question": "What was the touchdown speed during Leg 5 landing?",
+          "expected": "280 km/h",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 230.0
+        }
+      ]
+    },
+    "coding": {
+      "total_tasks": 2,
+      "passed_tasks": 2,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 555.0,
+      "latency_p95_ms": 640.0,
+      "ttft_p50_ms": 80.0,
+      "ttft_p95_ms": 80.0,
+      "results": [
+        {
+          "id": 101,
+          "task_type": "coding",
+          "question": "Write hydraulic pressure check function",
+          "expected": "def check_pressure(psi): return 180 <= psi <= 210",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 640.0
+        },
+        {
+          "id": 102,
+          "task_type": "coding",
+          "question": "Refactor avionics sensor parsing loop",
+          "expected": "parsed = [parse(x) for x in raw]",
+          "passed": true,
+          "reason": "Exact or semantic match with ground truth",
+          "ttft_ms": 80.0,
+          "total_time_ms": 470.0
+        }
+      ]
+    }
+  }
+}
